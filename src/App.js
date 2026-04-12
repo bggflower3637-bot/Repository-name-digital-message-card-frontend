@@ -37,6 +37,42 @@ const demos = {
 };
 
 function App() {
+
+const API_BASE_URL = "https://digital-message-card-server.onrender.com";
+
+const handleCreateVideo = async () => {
+  try {
+    const payload = {
+  situation,
+  fromName: senderName,
+  toName: recipientName,
+  message: generatedMessage,
+};
+
+    const res = await fetch(`${API_BASE_URL}/create-video`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (!res.ok) {
+      alert("Video creation failed");
+      return;
+    }
+
+    alert("Video request sent!");
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+};
+
   const [mode, setMode] = useState("photo");
   const [tone, setTone] = useState("warm");
   const [group, setGroup] = useState("asian");
