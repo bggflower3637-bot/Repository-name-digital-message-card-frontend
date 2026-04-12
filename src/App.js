@@ -334,92 +334,7 @@ function App() {
             </button>
           </div>
 
-          <div className="grid">
-            {chars.map((c) => (
-              <button
-                type="button"
-                key={c.id}
-                onClick={() => setCharacter(c.id)}
-                className={character === c.id ? "card selected" : "card"}
-              >
-                <img src={c.image} alt={c.name} className="characterImage" />
-                <p>{c.name}</p>
-              </button>
-            ))}
-          </div>
 
-          <div className="selectedCharBox">
-            Selected character: {chars.find((c) => c.id === character)?.name}
-          </div>
-        </section>
-      )}
-
-      <section className="section cardWrap">
-        <h2>Message Input</h2>
-
-        <div className="tabRow">
-          <button
-            type="button"
-            className={inputMode === "situation" ? "tabBtn active" : "tabBtn"}
-            onClick={() => setInputMode("situation")}
-          >
-            AI Write It For Me
-          </button>
-
-          <button
-            type="button"
-            className={inputMode === "exact" ? "tabBtn active" : "tabBtn"}
-            onClick={() => setInputMode("exact")}
-          >
-            Use My Exact Text
-          </button>
-        </div>
-
-        {inputMode === "situation" && (
-          <>
-            <label className="label">Describe the Situation</label>
-            <textarea
-              className="input"
-              rows="5"
-              placeholder="Example: It's my wife's birthday and I want a warm, loving message from me."
-              value={situation}
-              onChange={(e) => setSituation(e.target.value)}
-            />
-            <p className="note">
-              If you enter From and To below, the AI prompt will automatically include those names.
-            </p>
-
-            <button type="button" className="createBtn" onClick={handleGenerateMessage}>
-              Generate Message
-            </button>
-
-            {generatedMessage && (
-              <>
-                <label className="label">Generated Message</label>
-                <textarea
-                  className="input"
-                  rows="5"
-                  value={generatedMessage}
-                  onChange={(e) => setGeneratedMessage(e.target.value)}
-                />
-              </>
-            )}
-          </>
-        )}
-
-        {inputMode === "exact" && (
-          <>
-            <label className="label">Your Exact Message</label>
-            <textarea
-              className="input"
-              rows="5"
-              placeholder="Type the exact words you want in the video..."
-              value={customText}
-              onChange={(e) => setCustomText(e.target.value)}
-            />
-            <p className="note">This mode uses your wording directly.</p>
-          </>
-        )}
 
                   <h3 className="sectionTitle">Sender Info</h3>
 
@@ -490,6 +405,165 @@ function App() {
             value={recipientEmail}
             onChange={(e) => setRecipientEmail(e.target.value)}
           />
+
+          <div className="grid">
+            {chars.map((c) => (
+              <button
+                type="button"
+                key={c.id}
+                onClick={() => setCharacter(c.id)}
+                className={character === c.id ? "card selected" : "card"}
+              >
+                <img src={c.image} alt={c.name} className="characterImage" />
+                <p>{c.name}</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="selectedCharBox">
+            Selected character: {chars.find((c) => c.id === character)?.name}
+          </div>
+        </section>
+      )}
+
+      <section className="section cardWrap">
+        <h2>Message Input</h2>
+
+        <div className="tabRow">
+          <button
+            type="button"
+            className={inputMode === "situation" ? "tabBtn active" : "tabBtn"}
+            onClick={() => setInputMode("situation")}
+          >
+            AI Write It For Me
+          </button>
+
+          <button
+            type="button"
+            className={inputMode === "exact" ? "tabBtn active" : "tabBtn"}
+            onClick={() => setInputMode("exact")}
+          >
+            Use My Exact Text
+          </button>
+        </div>
+
+
+
+                  <h3 className="sectionTitle">Sender Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your name"
+                value={senderName}
+                onChange={(e) => setSenderName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your phone"
+                value={senderPhone}
+                onChange={(e) => setSenderPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <label className="label">Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <h3 className="sectionTitle">Recipient Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient name"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient phone"
+                value={recipientPhone}
+                onChange={(e) => setRecipientPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <label className="label">Recipient Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Recipient email"
+            value={recipientEmail}
+            onChange={(e) => setRecipientEmail(e.target.value)}
+          />
+
+        {inputMode === "situation" && (
+          <>
+            <label className="label">Describe the Situation</label>
+            <textarea
+              className="input"
+              rows="5"
+              placeholder="Example: It's my wife's birthday and I want a warm, loving message from me."
+              value={situation}
+              onChange={(e) => setSituation(e.target.value)}
+            />
+            <p className="note">
+              Enter sender and recipient details first, then describe the situation so the generated message includes those details.
+            </p>
+
+            <button type="button" className="createBtn" onClick={handleGenerateMessage}>
+              Generate Message
+            </button>
+
+            {generatedMessage && (
+              <>
+                <label className="label">Generated Message</label>
+                <textarea
+                  className="input"
+                  rows="5"
+                  value={generatedMessage}
+                  onChange={(e) => setGeneratedMessage(e.target.value)}
+                />
+              </>
+            )}
+          </>
+        )}
+
+        {inputMode === "exact" && (
+          <>
+            <label className="label">Your Exact Message</label>
+            <textarea
+              className="input"
+              rows="5"
+              placeholder="Type the exact words you want in the video..."
+              value={customText}
+              onChange={(e) => setCustomText(e.target.value)}
+            />
+            <p className="note">This mode uses your wording directly.</p>
+          </>
+        )}
 
         {statusMsg && <p className="statusMsg">{statusMsg}</p>}
 
