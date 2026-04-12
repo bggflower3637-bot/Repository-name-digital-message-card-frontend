@@ -267,24 +267,7 @@ function App() {
         </div>
       </section>
 
-      <section className="section">
-        <h2>Message Style</h2>
-        <div className="toneGrid">
-          {tones.map((t) => (
-            <button
-              type="button"
-              key={t.id}
-              className={tone === t.id ? "toneCard active" : "toneCard"}
-              onClick={() => setTone(t.id)}
-            >
-              <strong>{t.label}</strong>
-              <span>{t.desc}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {mode === "photo" && (
+{mode === "photo" && (
         <section className="section cardWrap">
           <h2>Upload Photo</h2>
           <input
@@ -302,6 +285,25 @@ function App() {
           )}
         </section>
       )}
+
+      <section className="section">
+        <h2>Message Style</h2>
+        <div className="toneGrid">
+          {tones.map((t) => (
+            <button
+              type="button"
+              key={t.id}
+              className={tone === t.id ? "toneCard active" : "toneCard"}
+              onClick={() => setTone(t.id)}
+            >
+              <strong>{t.label}</strong>
+              <span>{t.desc}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      
 
       {mode === "character" && (
         <section className="section cardWrap">
