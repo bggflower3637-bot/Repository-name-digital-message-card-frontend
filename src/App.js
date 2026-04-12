@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./App.css";
 
 const characterGroups = {
@@ -38,107 +38,53 @@ const demos = {
 
 function App() {
 
-const API_BASE_URL = "https://digital-message-card-server.onrender.com";
-
-const handleCreateVideo = async () => {
-  try {
-    const payload = {
-  situation,
-  fromName: senderName,
-  toName: recipientName,
-  message: generatedMessage,
-};
-
-    const res = await fetch(`${API_BASE_URL}/create-video`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-
-    console.log(data);
-
-    if (!res.ok) {
-      alert("Video creation failed");
-      return;
-    }
-
-    alert("Video request sent!");
-  } catch (err) {
-    console.error(err);
-    alert("Server error");
-  }
-};
 
   const [mode, setMode] = useState("photo");
   const [tone, setTone] = useState("warm");
   const [group, setGroup] = useState("asian");
   const [character, setCharacter] = useState("aria");
-
   const [inputMode, setInputMode] = useState("situation");
   const [situation, setSituation] = useState("");
   const [customText, setCustomText] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
-
   const [senderName, setSenderName] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [email, setEmail] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [selectedDemo, setSelectedDemo] = useState("birthday");
-
   const [isSubmitting] = useState(false);
   const [statusMsg] = useState("");
 
-  const chars = characterGroups[group];
+  const chars = useMemo(() => characterGroups[group] || [], [group]);
 
   const previewUrl = useMemo(() => {
-    if (!photoFile) return "";
-    return URL.createObjectURL(photoFile);
-  }, [photoFile]);
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
-
-  const buildAiPrompt = () => {
-    const sender = senderName.trim() || "someone";
-    const recipient = recipientName.trim() || "someone special";
-    const toneLabel = tones.find((t) => t.id === tone)?.label || tone;
-
-    if (inputMode === "exact") {
-      return customText.trim();
-    }
-
-    const situationText = situation.trim();
-
-    return [
-      "Write a short emotional video message.",
-      `Tone: ${toneLabel}.`,
-      `From: ${sender}.`,
-      `To: ${recipient}.`,
-      mode === "character" ? "Use the selected character as the speaker." : "",
-      mode === "photo" ? "Use the uploaded photo as the speaker." : "",
-      situationText ? `Situation: ${situationText}` : "",
-      "Keep it natural, warm, and ready to be spoken in a short video."
-    ]
-      .filter(Boolean)
-      .join(" ");
-  };
+    return demos[selectedDemo]?.src || "";
+  }, [selectedDemo]);
 
   const handleGenerateMessage = () => {
-    if (!situation.trim()) {
-      alert("Please describe the situation first.");
-      return;
+    let message = "";
+
+    if (inputMode === "exact") {
+      message = customText.trim();
+    } else {
+      const safeRecipient = recipientName.trim() || "you";
+
+      if (tone === "romantic") {
+        message = `To ${safeRecipient}, you mean so much to me. ${situation.trim()}`;
+      } else if (tone === "sympathy") {
+        message = `To ${safeRecipient}, Iâ€™m thinking of you and sending comfort. ${situation.trim()}`;
+      } else if (tone === "playful") {
+        message = `Hey ${safeRecipient}! ${situation.trim()}`;
+      } else if (tone === "calm") {
+        message = `To ${safeRecipient}, ${situation.trim()}`;
+      } else {
+        message = `To ${safeRecipient}, ${situation.trim()}`;
+      }
     }
 
-    const message = buildAiPrompt();
-    setGeneratedMessage(message);
+    setGeneratedMessage(message.trim());
   };
+
 
   const handleSubmit = async () => {
     if (!email.trim()) {
