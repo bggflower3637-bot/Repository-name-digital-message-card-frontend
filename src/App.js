@@ -235,73 +235,7 @@ function App() {
         </div>
       </section>
 
-      <section className="section">
-        <h2>Choose Mode</h2>
-        <div className="modeGrid">
-          <button
-            type="button"
-            className={mode === "photo" ? "modeCard active" : "modeCard"}
-            onClick={() => setMode("photo")}
-          >
-            <div className="modeTitle">Photo Mode</div>
-            <div className="modeDesc">Upload a real photo and receive the result by email.</div>
-          </button>
-
-          <button
-            type="button"
-            className={mode === "quick" ? "modeCard active" : "modeCard"}
-            onClick={() => setMode("quick")}
-          >
-            <div className="modeTitle">Quick Mode</div>
-            <div className="modeDesc">No photo needed. Fast message-style video generation.</div>
-          </button>
-
-          <button
-            type="button"
-            className={mode === "character" ? "modeCard active" : "modeCard"}
-            onClick={() => setMode("character")}
-          >
-            <div className="modeTitle">Character Option</div>
-            <div className="modeDesc">Choose a character, then write the message below.</div>
-          </button>
-        </div>
-      </section>
-
-{mode === "photo" && (
-        <section className="section cardWrap">
-          <h2>Upload Photo</h2>
-          <input
-            className="input"
-            type="file"
-            accept="image/*"
-            onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
-          />
-          <p className="note">Your final talking video will be delivered by email.</p>
-
-          {previewUrl && (
-            <div className="previewBox">
-              <img src={previewUrl} alt="preview" className="previewImage" />
-            </div>
-          )}
-        </section>
-      )}
-
-      <section className="section">
-        <h2>Message Style</h2>
-        <div className="toneGrid">
-          {tones.map((t) => (
-            <button
-              type="button"
-              key={t.id}
-              className={tone === t.id ? "toneCard active" : "toneCard"}
-              onClick={() => setTone(t.id)}
-            >
-              <strong>{t.label}</strong>
-              <span>{t.desc}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      
 
       
 
@@ -535,7 +469,75 @@ function App() {
               Enter sender and recipient details first, then describe the situation so the generated message includes those details.
             </p>
 
-            <button type="button" className="createBtn" onClick={handleGenerateMessage}>
+            <section className="section">
+        <h2>Choose Mode</h2>
+        <div className="modeGrid">
+          <button
+            type="button"
+            className={mode === "photo" ? "modeCard active" : "modeCard"}
+            onClick={() => setMode("photo")}
+          >
+            <div className="modeTitle">Photo Mode</div>
+            <div className="modeDesc">Upload a real photo and receive the result by email.</div>
+          </button>
+
+          <button
+            type="button"
+            className={mode === "quick" ? "modeCard active" : "modeCard"}
+            onClick={() => setMode("quick")}
+          >
+            <div className="modeTitle">Quick Mode</div>
+            <div className="modeDesc">No photo needed. Fast message-style video generation.</div>
+          </button>
+
+          <button
+            type="button"
+            className={mode === "character" ? "modeCard active" : "modeCard"}
+            onClick={() => setMode("character")}
+          >
+            <div className="modeTitle">Character Option</div>
+            <div className="modeDesc">Choose a character, then write the message below.</div>
+          </button>
+        </div>
+      </section>
+
+{mode === "photo" && (
+        <section className="section cardWrap">
+          <h2>Upload Photo</h2>
+          <input
+            className="input"
+            type="file"
+            accept="image/*"
+            onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
+          />
+          <p className="note">Your final talking video will be delivered by email.</p>
+
+          {previewUrl && (
+            <div className="previewBox">
+              <img src={previewUrl} alt="preview" className="previewImage" />
+            </div>
+          )}
+        </section>
+      )}
+
+      <section className="section">
+        <h2>Message Style</h2>
+        <div className="toneGrid">
+          {tones.map((t) => (
+            <button
+              type="button"
+              key={t.id}
+              className={tone === t.id ? "toneCard active" : "toneCard"}
+              onClick={() => setTone(t.id)}
+            >
+              <strong>{t.label}</strong>
+              <span>{t.desc}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+<button type="button" className="createBtn" onClick={handleGenerateMessage}>
   Generate Message
 </button>
 <div className="actionNote">
