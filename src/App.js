@@ -534,8 +534,11 @@ function App() {
             </p>
 
             <button type="button" className="createBtn" onClick={handleGenerateMessage}>
-              Generate Message
-            </button>
+  Generate Message
+</button>
+<div className="actionNote">
+  Preview the message first so you can review the wording before creating the video.
+</div>
 
             {generatedMessage && (
               <>
@@ -568,8 +571,11 @@ function App() {
         {statusMsg && <p className="statusMsg">{statusMsg}</p>}
 
         <button type="button" className="createBtn" onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create My Video"}
-        </button>
+  {isSubmitting ? "Creating..." : "Create My Video"}
+</button>
+<div className="actionNote">
+  Video generation can take a little time. When it is ready, we will send it to the contact details you entered.
+</div>
       </section>
     </div>
   );
