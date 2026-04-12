@@ -72,7 +72,7 @@ function App() {
       if (tone === "romantic") {
         message = `To ${safeRecipient}, you mean so much to me. ${situation.trim()}`;
       } else if (tone === "sympathy") {
-        message = `To ${safeRecipient}, Iâ€™m thinking of you and sending comfort. ${situation.trim()}`;
+        message = `To ${safeRecipient}, IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢m thinking of you and sending comfort. ${situation.trim()}`;
       } else if (tone === "playful") {
         message = `Hey ${safeRecipient}! ${situation.trim()}`;
       } else if (tone === "calm") {
@@ -130,6 +130,52 @@ function App() {
     };
 
     console.log("Final payload:", payload);
+    try {
+      const res = await fetch("https://digital-message-card-server.onrender.com/create-video", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      console.log("SERVER RESPONSE:", data);
+
+      if (!res.ok) {
+        alert(data.error || "Video creation failed");
+        return;
+      }
+
+      alert("Video request sent successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
+try {
+      const res = await fetch("https://digital-message-card-server.onrender.com/create-video", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      console.log("SERVER RESPONSE:", data);
+
+      if (!res.ok) {
+        alert("Video creation failed");
+        return;
+      }
+
+      alert("Video request sent successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
+
 
     /*
     try {
@@ -171,8 +217,7 @@ function App() {
     }
     */
 
-    alert("Message confirmed. Next step is server connection.");
-  };
+    };
 
   return (
     <div className="app">
