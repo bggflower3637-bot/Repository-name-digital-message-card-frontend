@@ -1,0 +1,259 @@
+﻿import React, { useMemo, useState } from "react";
+import "./App.css";
+
+const characters = [
+  { id: "aria", name: "Aria", image: "/characters/aria.jpg" },
+  { id: "jae", name: "Jae", image: "/characters/jae.jpg" },
+  { id: "mina", name: "Mina", image: "/characters/mina.jpg" },
+  { id: "reo", name: "Reo", image: "/characters/reo.jpg" },
+  { id: "ryu", name: "Ryu", image: "/characters/ryu.jpg" },
+  { id: "soo", name: "Soo", image: "/characters/soo.jpg" },
+];
+
+function App() {
+  const [mode, setMode] = useState("photo");
+  const [showDemo, setShowDemo] = useState(false);
+
+  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
+  const [selectedCharacter, setSelectedCharacter] = useState("aria");
+
+  const photoPreviewUrl = useMemo(() => {
+    if (!photoFile) return "";
+    return URL.createObjectURL(photoFile);
+  }, [photoFile]);
+
+  const modeTitle = {
+    photo: "Photo Mode",
+    quick: "Quick Mode",
+    character: "Character Option",
+  };
+
+  const modeDescription = {
+    photo: "Upload a real photo. We create a talking video and send it by email.",
+    quick: "No photo needed. Generate a fast message preview right on the screen.",
+    character: "Use a character instead of a real photo for a fun and easy option.",
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const payload = {
+      mode,
+      message,
+      email,
+      selectedCharacter: mode === "character" ? selectedCharacter : null,
+      hasPhoto: mode === "photo" ? !!photoFile : false,
+    };
+
+    console.log("Submit payload:", payload);
+
+    if (mode === "photo") {
+      alert("Photo mode selected.\nYour talking video will be created and sent by email.");
+      return;
+    }
+
+    if (mode === "quick") {
+      alert("Quick mode selected.\nA fast preview would be shown here.");
+      return;
+    }
+
+    if (mode === "character") {
+      alert(`Character mode selected.\nChosen character: ${selectedCharacter}`);
+    }
+  };
+
+  return (
+    <div className="app">
+      <header className="hero">
+        <div className="hero-badge">AI Talking Message</div>
+        <h1>Turn Your Photo into Talking Messages</h1>
+        <p className="hero-subtitle">
+          Create emotional talking message videos from a real photo, a quick text, or a fun character.
+        </p>
+
+        <div className="hero-actions">
+          <button className="primary-btn" onClick={() => setMode("photo")}>
+            Create Now
+          </button>
+          <button className="secondary-btn" onClick={() => setShowDemo(true)}>
+            Demo
+          </button>
+        </div>
+
+        <div className="hero-note">
+          Photo mode takes longer and is delivered by email. Quick mode is faster and preview-based.
+        </div>
+      </header>
+
+      <section className="mode-section">
+        <h2>Choose Your Mode</h2>
+        <div className="mode-grid">
+          <button
+            className={`mode-card ${mode === "photo" ? "active" : ""}`}
+            onClick={() => setMode("photo")}
+            type="button"
+          >
+            <div className="mode-icon">📷</div>
+            <div className="mode-text">
+              <strong>Photo Mode</strong>
+              <span>Upload a photo and get a talking video by email.</span>
+            </div>
+          </button>
+
+          <button
+            className={`mode-card ${mode === "quick" ? "active" : ""}`}
+            onClick={() => setMode("quick")}
+            type="button"
+          >
+            <div className="mode-icon">⚡</div>
+            <div className="mode-text">
+              <strong>Quick Mode</strong>
+              <span>No photo needed. Fast preview on screen.</span>
+            </div>
+          </button>
+
+          <button
+            className={`mode-card ${mode === "character" ? "active" : ""}`}
+            onClick={() => setMode("character")}
+            type="button"
+          >
+            <div className="mode-icon">✨</div>
+            <div className="mode-text">
+              <strong>Character Option</strong>
+              <span>Choose a character image for a fun talking message.</span>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section className="content-section">
+        <div className="section-header">
+          <h2>{modeTitle[mode]}</h2>
+          <p>{modeDescription[mode]}</p>
+        </div>
+
+        <div className="content-card">
+          <form className="form" onSubmit={handleSubmit}>
+            {mode === "photo" && (
+              <div className="form-group">
+                <label htmlFor="photoUpload">Upload Photo</label>
+                <input
+                  id="photoUpload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
+                />
+                <small>Your finished talking video will be sent to your email.</small>
+
+                {photoPreviewUrl && (
+                  <div className="photo-preview">
+                    <img src={photoPreviewUrl} alt="Uploaded preview" />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {mode === "character" && (
+              <div className="form-group">
+                <label>Select Character</label>
+                <div className="character-grid">
+                  {characters.map((character) => (
+                    <button
+                      key={character.id}
+                      type="button"
+                      className={`character-card ${
+                        selectedCharacter === character.id ? "selected" : ""
+                      }`}
+                      onClick={() => setSelectedCharacter(character.id)}
+                    >
+                      <img src={character.image} alt={character.name} />
+                      <span>{character.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="form-group">
+              <label htmlFor="message">Your Message</label>
+              <textarea
+                id="message"
+                placeholder="Write the message you want to send..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={5}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {mode === "photo" ? (
+                <small>We will email the finished video after generation.</small>
+              ) : (
+                <small>You can still receive the result by email.</small>
+              )}
+            </div>
+
+            <button className="submit-btn" type="submit">
+              {mode === "photo"
+                ? "Create Talking Video"
+                : mode === "quick"
+                ? "Generate Quick Preview"
+                : "Create with Character"}
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section className="info-section">
+        <div className="info-card">
+          <h3>How It Works</h3>
+          <div className="steps">
+            <div className="step">
+              <span className="step-number">1</span>
+              <p>Choose Photo, Quick, or Character mode.</p>
+            </div>
+            <div className="step">
+              <span className="step-number">2</span>
+              <p>Write your emotional message and add your email.</p>
+            </div>
+            <div className="step">
+              <span className="step-number">3</span>
+              <p>Get a talking message video preview or email delivery.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {showDemo && (
+        <div className="modal-overlay" onClick={() => setShowDemo(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={() => setShowDemo(false)}>
+              ×
+            </button>
+
+            <div className="demo-header">
+              <h3>Turn Your Photo into Talking Messages</h3>
+            </div>
+
+            <video className="demo-video" controls autoPlay playsInline>
+              <source src="/demo.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
