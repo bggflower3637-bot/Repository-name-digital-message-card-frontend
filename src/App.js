@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const characterGroups = {
@@ -37,54 +37,75 @@ const demos = {
 };
 
 function App() {
-
-
   const [mode, setMode] = useState("photo");
   const [tone, setTone] = useState("warm");
   const [group, setGroup] = useState("asian");
   const [character, setCharacter] = useState("aria");
+
   const [inputMode, setInputMode] = useState("situation");
   const [situation, setSituation] = useState("");
   const [customText, setCustomText] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
+
   const [senderName, setSenderName] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [email, setEmail] = useState("");
+  const [senderPhone, setSenderPhone] = useState("");
+  const [recipientPhone, setRecipientPhone] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [selectedDemo, setSelectedDemo] = useState("birthday");
+
   const [isSubmitting] = useState(false);
   const [statusMsg] = useState("");
 
-  const chars = useMemo(() => characterGroups[group] || [], [group]);
+  const chars = characterGroups[group];
 
   const previewUrl = useMemo(() => {
-    return demos[selectedDemo]?.src || "";
-  }, [selectedDemo]);
+    if (!photoFile) return "";
+    return URL.createObjectURL(photoFile);
+  }, [photoFile]);
 
-  const handleGenerateMessage = () => {
-    let message = "";
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  const buildAiPrompt = () => {
+    const sender = senderName.trim() || "someone";
+    const recipient = recipientName.trim() || "someone special";
+    const toneLabel = tones.find((t) => t.id === tone)?.label || tone;
 
     if (inputMode === "exact") {
-      message = customText.trim();
-    } else {
-      const safeRecipient = recipientName.trim() || "you";
-
-      if (tone === "romantic") {
-        message = `To ${safeRecipient}, you mean so much to me. ${situation.trim()}`;
-      } else if (tone === "sympathy") {
-        message = `To ${safeRecipient}, IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢m thinking of you and sending comfort. ${situation.trim()}`;
-      } else if (tone === "playful") {
-        message = `Hey ${safeRecipient}! ${situation.trim()}`;
-      } else if (tone === "calm") {
-        message = `To ${safeRecipient}, ${situation.trim()}`;
-      } else {
-        message = `To ${safeRecipient}, ${situation.trim()}`;
-      }
+      return customText.trim();
     }
 
-    setGeneratedMessage(message.trim());
+    const situationText = situation.trim();
+
+    return [
+      "Write a short emotional video message.",
+      `Tone: ${toneLabel}.`,
+      `From: ${sender}.`,
+      `To: ${recipient}.`,
+      mode === "character" ? "Use the selected character as the speaker." : "",
+      mode === "photo" ? "Use the uploaded photo as the speaker." : "",
+      situationText ? `Situation: ${situationText}` : "",
+      "Keep it natural, warm, and ready to be spoken in a short video."
+    ]
+      .filter(Boolean)
+      .join(" ");
   };
 
+  const handleGenerateMessage = () => {
+    if (!situation.trim()) {
+      alert("Please describe the situation first.");
+      return;
+    }
+
+    const message = buildAiPrompt();
+    setGeneratedMessage(message);
+  };
 
   const handleSubmit = async () => {
     if (!email.trim()) {
@@ -130,52 +151,6 @@ function App() {
     };
 
     console.log("Final payload:", payload);
-    try {
-      const res = await fetch("https://digital-message-card-server.onrender.com/create-video", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      console.log("SERVER RESPONSE:", data);
-
-      if (!res.ok) {
-        alert(data.error || "Video creation failed");
-        return;
-      }
-
-      alert("Video request sent successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Server error");
-    }
-try {
-      const res = await fetch("https://digital-message-card-server.onrender.com/create-video", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-
-      console.log("SERVER RESPONSE:", data);
-
-      if (!res.ok) {
-        alert("Video creation failed");
-        return;
-      }
-
-      alert("Video request sent successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Server error");
-    }
-
 
     /*
     try {
@@ -217,7 +192,8 @@ try {
     }
     */
 
-    };
+    alert("Message confirmed. Next step is server connection.");
+  };
 
   return (
     <div className="app">
@@ -445,38 +421,75 @@ try {
           </>
         )}
 
-        <div className="formGrid">
-          <div>
-            <label className="label">From</label>
-            <input
-              className="input"
-              type="text"
-              placeholder="Your name"
-              value={senderName}
-              onChange={(e) => setSenderName(e.target.value)}
-            />
+                  <h3 className="sectionTitle">Sender Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your name"
+                value={senderName}
+                onChange={(e) => setSenderName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your phone"
+                value={senderPhone}
+                onChange={(e) => setSenderPhone(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="label">To</label>
-            <input
-              className="input"
-              type="text"
-              placeholder="Recipient name"
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-            />
-          </div>
-        </div>
+          <label className="label">Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <label className="label">Email</label>
-        <input
-          className="input"
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <h3 className="sectionTitle">Recipient Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient name"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient phone"
+                value={recipientPhone}
+                onChange={(e) => setRecipientPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <label className="label">Recipient Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Recipient email"
+            value={recipientEmail}
+            onChange={(e) => setRecipientEmail(e.target.value)}
+          />
 
         {statusMsg && <p className="statusMsg">{statusMsg}</p>}
 
