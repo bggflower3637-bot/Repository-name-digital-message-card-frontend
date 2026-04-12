@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const characterGroups = {
@@ -53,8 +53,8 @@ function App() {
   const [photoFile, setPhotoFile] = useState(null);
   const [selectedDemo, setSelectedDemo] = useState("birthday");
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [statusMsg, setStatusMsg] = useState("");
+  const [isSubmitting] = useState(false);
+  const [statusMsg] = useState("");
 
   const chars = characterGroups[group];
 
