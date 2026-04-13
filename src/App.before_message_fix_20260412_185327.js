@@ -1,5 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
+
+const API_BASE =
+  process.env.REACT_APP_API_BASE_URL ||
+  "http://localhost:10000";
 
 const characterGroups = {
   asian: [
@@ -50,11 +54,15 @@ function App() {
   const [senderName, setSenderName] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [email, setEmail] = useState("");
+  const [senderPhone, setSenderPhone] = useState("");
+  const [recipientPhone, setRecipientPhone] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [selectedDemo, setSelectedDemo] = useState("birthday");
 
-  const [isSubmitting] = useState(false);
-  const [statusMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+  const [jobId, setJobId] = useState("");
 
   const chars = characterGroups[group];
 
@@ -69,32 +77,70 @@ function App() {
     };
   }, [previewUrl]);
 
-  const buildAiPrompt = () => {
-    const sender = senderName.trim() || "someone";
-    const recipient = recipientName.trim() || "someone special";
-    const toneLabel = tones.find((t) => t.id === tone)?.label || tone;
+  useEffect(() => {
+    if (!jobId) return;
 
+    const timer = setInterval(async () => {
+      try {
+        const res = await fetch(`${API_BASE}/video-status/${jobId}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to fetch status");
+        }
+
+        if (data.status === "completed") {
+          setStatusMsg("✅ Video completed.");
+          clearInterval(timer);
+        } else if (data.status === "error") {
+          setStatusMsg(`❌ Failed: ${data.error || "Unknown error"}`);
+          clearInterval(timer);
+        } else {
+          setStatusMsg(`Processing... ${data.progress ?? 0}%`);
+        }
+      } catch (err) {
+        console.error(err);
+        setStatusMsg("Failed to check video status.");
+        clearInterval(timer);
+      }
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [jobId]);
+
+  const buildAiPrompt = () => {
     if (inputMode === "exact") {
       return customText.trim();
     }
 
+    const sender = senderName.trim() || "someone";
+    const recipient = recipientName.trim() || "someone special";
+    const toneLabel = tones.find((t) => t.id === tone)?.label || tone;
     const situationText = situation.trim();
 
     return [
-      "Write a short emotional video message.",
-      `Tone: ${toneLabel}.`,
+      "Write a short emotional spoken message in English.",
       `From: ${sender}.`,
       `To: ${recipient}.`,
-      mode === "character" ? "Use the selected character as the speaker." : "",
-      mode === "photo" ? "Use the uploaded photo as the speaker." : "",
+      `Tone: ${toneLabel}.`,
       situationText ? `Situation: ${situationText}` : "",
-      "Keep it natural, warm, and ready to be spoken in a short video."
+      mode === "character" ? `Character speaker: ${character}.` : "",
+      "Keep it warm, concise, natural, and suitable for a short talking video."
     ]
       .filter(Boolean)
       .join(" ");
   };
 
   const handleGenerateMessage = () => {
+    if (inputMode === "exact") {
+      if (!customText.trim()) {
+        alert("Please type your exact message first.");
+        return;
+      }
+      setGeneratedMessage(customText.trim());
+      return;
+    }
+
     if (!situation.trim()) {
       alert("Please describe the situation first.");
       return;
@@ -126,70 +172,58 @@ function App() {
     }
 
     if (inputMode === "situation" && !generatedMessage.trim()) {
-      alert("Please generate and review the message first.");
+      alert("Please generate the message first.");
       return;
     }
 
     const finalMessage =
       inputMode === "exact" ? customText.trim() : generatedMessage.trim();
 
-    const payload = {
-      mode,
-      tone,
-      inputMode,
-      group: mode === "character" ? group : null,
-      character: mode === "character" ? character : null,
-      senderName: senderName.trim(),
-      recipientName: recipientName.trim(),
-      email: email.trim(),
-      situation: inputMode === "situation" ? situation.trim() : null,
-      customText: inputMode === "exact" ? customText.trim() : null,
-      finalMessage
-    };
+    const formData = new FormData();
+    formData.append("mode", mode);
+    formData.append("tone", tone);
+    formData.append("inputMode", inputMode);
+    formData.append("group", mode === "character" ? group : "");
+    formData.append("character", mode === "character" ? character : "");
+    formData.append("senderName", senderName.trim());
+    formData.append("recipientName", recipientName.trim());
+    formData.append("email", email.trim());
+    formData.append("senderPhone", senderPhone.trim());
+    formData.append("recipientPhone", recipientPhone.trim());
+    formData.append("recipientEmail", recipientEmail.trim());
+    formData.append("situation", inputMode === "situation" ? situation.trim() : "");
+    formData.append("customText", inputMode === "exact" ? customText.trim() : "");
+    formData.append("finalMessage", finalMessage);
+    formData.append("voice", "female");
 
-    console.log("Final payload:", payload);
+    if (photoFile) {
+      formData.append("photo", photoFile);
+    }
 
-    /*
     try {
       setIsSubmitting(true);
       setStatusMsg("Creating your video...");
+      setJobId("");
 
-      if (mode === "photo") {
-        const formData = new FormData();
-        formData.append("photo", photoFile);
+      const res = await fetch(`${API_BASE}/create-video`, {
+        method: "POST",
+        body: formData
+      });
 
-        Object.entries(payload).forEach(([key, value]) => {
-          formData.append(key, value ?? "");
-        });
+      const data = await res.json();
 
-        const res = await fetch("http://localhost:5000/create-video", {
-          method: "POST",
-          body: formData
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to create video.");
-      } else {
-        const res = await fetch("http://localhost:5000/create-video", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to create video.");
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Failed to create video.");
       }
 
-      setStatusMsg("Your request was submitted successfully.");
-    } catch (error) {
-      console.error(error);
-      setStatusMsg(error.message || "Something went wrong.");
+      setJobId(data.jobId);
+      setStatusMsg("Processing started...");
+    } catch (err) {
+      console.error(err);
+      setStatusMsg(err.message || "Something went wrong.");
     } finally {
       setIsSubmitting(false);
     }
-    */
-
-    alert("Message confirmed. Next step is server connection.");
   };
 
   return (
@@ -264,23 +298,6 @@ function App() {
         </div>
       </section>
 
-      <section className="section">
-        <h2>Message Style</h2>
-        <div className="toneGrid">
-          {tones.map((t) => (
-            <button
-              type="button"
-              key={t.id}
-              className={tone === t.id ? "toneCard active" : "toneCard"}
-              onClick={() => setTone(t.id)}
-            >
-              <strong>{t.label}</strong>
-              <span>{t.desc}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
       {mode === "photo" && (
         <section className="section cardWrap">
           <h2>Upload Photo</h2>
@@ -304,7 +321,7 @@ function App() {
         <section className="section cardWrap">
           <h2>Select Character</h2>
           <p className="note">
-            Choose a character first, then write the message below. The selected character will be used as the talking speaker.
+            Choose a character first. The selected character will be used as the talking speaker.
           </p>
 
           <div className="tabRow">
@@ -352,6 +369,85 @@ function App() {
       )}
 
       <section className="section cardWrap">
+        <h2>Sender Info</h2>
+
+        <label className="label">Name</label>
+        <input
+          className="input"
+          type="text"
+          placeholder="Your name"
+          value={senderName}
+          onChange={(e) => setSenderName(e.target.value)}
+        />
+
+        <label className="label">Phone</label>
+        <input
+          className="input"
+          type="text"
+          placeholder="Your phone"
+          value={senderPhone}
+          onChange={(e) => setSenderPhone(e.target.value)}
+        />
+
+        <label className="label">Email</label>
+        <input
+          className="input"
+          type="email"
+          placeholder="Your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </section>
+
+      <section className="section cardWrap">
+        <h2>Recipient Info</h2>
+
+        <label className="label">Name</label>
+        <input
+          className="input"
+          type="text"
+          placeholder="Recipient name"
+          value={recipientName}
+          onChange={(e) => setRecipientName(e.target.value)}
+        />
+
+        <label className="label">Phone</label>
+        <input
+          className="input"
+          type="text"
+          placeholder="Recipient phone"
+          value={recipientPhone}
+          onChange={(e) => setRecipientPhone(e.target.value)}
+        />
+
+        <label className="label">Recipient Email</label>
+        <input
+          className="input"
+          type="email"
+          placeholder="Recipient email"
+          value={recipientEmail}
+          onChange={(e) => setRecipientEmail(e.target.value)}
+        />
+      </section>
+
+      <section className="section cardWrap">
+        <h2>Message Style</h2>
+        <div className="toneGrid">
+          {tones.map((t) => (
+            <button
+              type="button"
+              key={t.id}
+              className={tone === t.id ? "toneCard active" : "toneCard"}
+              onClick={() => setTone(t.id)}
+            >
+              <strong>{t.label}</strong>
+              <span>{t.desc}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="section cardWrap">
         <h2>Message Input</h2>
 
         <div className="tabRow">
@@ -383,24 +479,8 @@ function App() {
               onChange={(e) => setSituation(e.target.value)}
             />
             <p className="note">
-              If you enter From and To below, the AI prompt will automatically include those names.
+              Enter sender and recipient details first, then describe the situation.
             </p>
-
-            <button type="button" className="createBtn" onClick={handleGenerateMessage}>
-              Generate Message
-            </button>
-
-            {generatedMessage && (
-              <>
-                <label className="label">Generated Message</label>
-                <textarea
-                  className="input"
-                  rows="5"
-                  value={generatedMessage}
-                  onChange={(e) => setGeneratedMessage(e.target.value)}
-                />
-              </>
-            )}
           </>
         )}
 
@@ -418,44 +498,40 @@ function App() {
           </>
         )}
 
-        <div className="formGrid">
-          <div>
-            <label className="label">From</label>
-            <input
-              className="input"
-              type="text"
-              placeholder="Your name"
-              value={senderName}
-              onChange={(e) => setSenderName(e.target.value)}
-            />
-          </div>
+        <button type="button" className="createBtn" onClick={handleGenerateMessage}>
+          Generate Message
+        </button>
 
-          <div>
-            <label className="label">To</label>
-            <input
-              className="input"
-              type="text"
-              placeholder="Recipient name"
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-            />
-          </div>
+        <div className="actionNote">
+          Preview the message first so you can review the wording before creating the video.
         </div>
 
-        <label className="label">Email</label>
-        <input
-          className="input"
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        {generatedMessage && (
+          <>
+            <label className="label">Generated Message</label>
+            <textarea
+              className="input"
+              rows="5"
+              value={generatedMessage}
+              onChange={(e) => setGeneratedMessage(e.target.value)}
+            />
+          </>
+        )}
 
         {statusMsg && <p className="statusMsg">{statusMsg}</p>}
 
-        <button type="button" className="createBtn" onClick={handleSubmit} disabled={isSubmitting}>
+        <button
+          type="button"
+          className="createBtn"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+        >
           {isSubmitting ? "Creating..." : "Create My Video"}
         </button>
+
+        <div className="actionNote">
+          Video generation can take a little time. When it is ready, we will send it to the email you entered.
+        </div>
       </section>
     </div>
   );

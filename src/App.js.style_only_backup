@@ -50,6 +50,9 @@ function App() {
   const [senderName, setSenderName] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [email, setEmail] = useState("");
+  const [senderPhone, setSenderPhone] = useState("");
+  const [recipientPhone, setRecipientPhone] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [selectedDemo, setSelectedDemo] = useState("birthday");
 
@@ -264,24 +267,7 @@ function App() {
         </div>
       </section>
 
-      <section className="section">
-        <h2>Message Style</h2>
-        <div className="toneGrid">
-          {tones.map((t) => (
-            <button
-              type="button"
-              key={t.id}
-              className={tone === t.id ? "toneCard active" : "toneCard"}
-              onClick={() => setTone(t.id)}
-            >
-              <strong>{t.label}</strong>
-              <span>{t.desc}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {mode === "photo" && (
+{mode === "photo" && (
         <section className="section cardWrap">
           <h2>Upload Photo</h2>
           <input
@@ -299,6 +285,25 @@ function App() {
           )}
         </section>
       )}
+
+      <section className="section">
+        <h2>Message Style</h2>
+        <div className="toneGrid">
+          {tones.map((t) => (
+            <button
+              type="button"
+              key={t.id}
+              className={tone === t.id ? "toneCard active" : "toneCard"}
+              onClick={() => setTone(t.id)}
+            >
+              <strong>{t.label}</strong>
+              <span>{t.desc}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      
 
       {mode === "character" && (
         <section className="section cardWrap">
@@ -330,6 +335,78 @@ function App() {
               Western
             </button>
           </div>
+
+
+
+                  <h3 className="sectionTitle">Sender Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your name"
+                value={senderName}
+                onChange={(e) => setSenderName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your phone"
+                value={senderPhone}
+                onChange={(e) => setSenderPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <label className="label">Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <h3 className="sectionTitle">Recipient Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient name"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient phone"
+                value={recipientPhone}
+                onChange={(e) => setRecipientPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <label className="label">Recipient Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Recipient email"
+            value={recipientEmail}
+            onChange={(e) => setRecipientEmail(e.target.value)}
+          />
 
           <div className="grid">
             {chars.map((c) => (
@@ -372,6 +449,78 @@ function App() {
           </button>
         </div>
 
+
+
+                  <h3 className="sectionTitle">Sender Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your name"
+                value={senderName}
+                onChange={(e) => setSenderName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Your phone"
+                value={senderPhone}
+                onChange={(e) => setSenderPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <label className="label">Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <h3 className="sectionTitle">Recipient Info</h3>
+
+          <div className="formGrid">
+            <div>
+              <label className="label">Name</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient name"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label">Phone</label>
+              <input
+                className="input"
+                type="text"
+                placeholder="Recipient phone"
+                value={recipientPhone}
+                onChange={(e) => setRecipientPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <label className="label">Recipient Email</label>
+          <input
+            className="input"
+            type="email"
+            placeholder="Recipient email"
+            value={recipientEmail}
+            onChange={(e) => setRecipientEmail(e.target.value)}
+          />
+
         {inputMode === "situation" && (
           <>
             <label className="label">Describe the Situation</label>
@@ -383,12 +532,15 @@ function App() {
               onChange={(e) => setSituation(e.target.value)}
             />
             <p className="note">
-              If you enter From and To below, the AI prompt will automatically include those names.
+              Enter sender and recipient details first, then describe the situation so the generated message includes those details.
             </p>
 
             <button type="button" className="createBtn" onClick={handleGenerateMessage}>
-              Generate Message
-            </button>
+  Generate Message
+</button>
+<div className="actionNote">
+  Preview the message first so you can review the wording before creating the video.
+</div>
 
             {generatedMessage && (
               <>
@@ -418,44 +570,14 @@ function App() {
           </>
         )}
 
-        <div className="formGrid">
-          <div>
-            <label className="label">From</label>
-            <input
-              className="input"
-              type="text"
-              placeholder="Your name"
-              value={senderName}
-              onChange={(e) => setSenderName(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="label">To</label>
-            <input
-              className="input"
-              type="text"
-              placeholder="Recipient name"
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <label className="label">Email</label>
-        <input
-          className="input"
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
         {statusMsg && <p className="statusMsg">{statusMsg}</p>}
 
         <button type="button" className="createBtn" onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create My Video"}
-        </button>
+  {isSubmitting ? "Creating..." : "Create My Video"}
+</button>
+<div className="actionNote">
+  Video generation can take a little time. When it is ready, we will send it to the contact details you entered.
+</div>
       </section>
     </div>
   );
