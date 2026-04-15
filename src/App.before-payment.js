@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const API_BASE =
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ||
+  process.env.REACT_APP_API_BASE_URL ||
   "http://localhost:10000";
 
 const characterGroups = {
@@ -90,10 +90,10 @@ function App() {
         }
 
         if (data.status === "completed") {
-          setStatusMsg("? Video completed.");
+          setStatusMsg("✅ Video completed.");
           clearInterval(timer);
         } else if (data.status === "error") {
-          setStatusMsg(`? Failed: ${data.error || "Unknown error"}`);
+          setStatusMsg(`❌ Failed: ${data.error || "Unknown error"}`);
           clearInterval(timer);
         } else {
           setStatusMsg(`Processing... ${data.progress ?? 0}%`);
@@ -229,82 +229,6 @@ function App() {
     }
   };
 
-
-  const handleProceedToPayment = async () => {
-    if (!email.trim()) {
-      alert("Please enter your email.");
-      return;
-    }
-
-    if (inputMode === "situation" && !situation.trim()) {
-      alert("Please describe the situation.");
-      return;
-    }
-
-    if (inputMode === "exact" && !customText.trim()) {
-      alert("Please type your exact message.");
-      return;
-    }
-
-    if (inputMode === "situation" && !generatedMessage.trim()) {
-      alert("Please generate the message first.");
-      return;
-    }
-
-    if (mode === "photo") {
-      alert("Photo mode payment not ready yet.");
-      return;
-    }
-
-    const finalMessage =
-      inputMode === "exact" ? customText.trim() : generatedMessage.trim();
-
-    const payload = {
-      email: email.trim(),
-      messageData: {
-        mode,
-        tone,
-        inputMode,
-        group: mode === "character" ? group : "",
-        character: mode === "character" ? character : "",
-        senderName: senderName.trim(),
-        recipientName: recipientName.trim(),
-        recipientEmail: recipientEmail.trim(),
-        senderPhone: senderPhone.trim(),
-        recipientPhone: recipientPhone.trim(),
-        situation: inputMode === "situation" ? situation.trim() : "",
-        customText: inputMode === "exact" ? customText.trim() : "",
-        finalMessage,
-        voice: "female"
-      }
-    };
-
-    try {
-      setIsSubmitting(true);
-      setStatusMsg("Redirecting to payment...");
-
-      const res = await fetch(`${API_BASE}/create-checkout-session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.url) {
-        throw new Error(data.error || "Checkout failed");
-      }
-
-      window.location.href = data.url;
-    } catch (err) {
-      console.error(err);
-      setStatusMsg(err.message || "Payment error.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
   return (
     <div className="app">
       <section className="hero">
@@ -602,20 +526,14 @@ function App() {
         <button
           type="button"
           className="createBtn createBtn-submit"
-          onClick={mode === "photo" ? handleSubmit : handleProceedToPayment}
+          onClick={handleSubmit}
           disabled={isSubmitting}
         >
-          {isSubmitting
-            ? "Processing..."
-            : mode === "photo"
-              ? "Create My Video"
-              : "Proceed to Payment"}
+          {isSubmitting ? "Creating..." : "Create My Video"}
         </button>
 
         <div className="actionNote">
-          {mode === "photo"
-            ? "Photo mode is still using the direct creation flow."
-            : "After payment, your video will be created and sent to your email."}
+          Video generation can take a little time. When it is ready, we will send it to the email you entered.
         </div>
       </section>
     </div>
@@ -623,8 +541,6 @@ function App() {
 }
 
 export default App;
-
-
 
 
 

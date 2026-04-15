@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const API_BASE =
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ||
+  process.env.REACT_APP_API_BASE_URL ||
   "http://localhost:10000";
 
 const characterGroups = {
@@ -90,10 +90,10 @@ function App() {
         }
 
         if (data.status === "completed") {
-          setStatusMsg("? Video completed.");
+          setStatusMsg("✅ Video completed.");
           clearInterval(timer);
         } else if (data.status === "error") {
-          setStatusMsg(`? Failed: ${data.error || "Unknown error"}`);
+          setStatusMsg(`❌ Failed: ${data.error || "Unknown error"}`);
           clearInterval(timer);
         } else {
           setStatusMsg(`Processing... ${data.progress ?? 0}%`);
@@ -623,7 +623,6 @@ function App() {
 }
 
 export default App;
-
 
 
 
