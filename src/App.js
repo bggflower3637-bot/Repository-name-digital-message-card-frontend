@@ -3,6 +3,7 @@ import "./App.css";
 
 const API_BASE =
   process.env.REACT_APP_API_BASE ||
+  process.env.REACT_APP_API_URL ||
   "https://digital-message-card-server.onrender.com";
 
 const characterGroups = {
@@ -22,6 +23,21 @@ const characterGroups = {
     { id: "wf2", name: "Sophie", image: "/characters/western/wf2.jpg" },
     { id: "bf1", name: "Ava", image: "/characters/western/bf1.jpg" }
   ]
+};
+
+const characterGenderMap = {
+  aria: "female",
+  jae: "male",
+  mina: "female",
+  reo: "male",
+  ryu: "male",
+  soo: "female",
+  wm1: "male",
+  wm2: "male",
+  bm1: "male",
+  wf1: "female",
+  wf2: "female",
+  bf1: "female"
 };
 
 const tones = [
@@ -80,33 +96,54 @@ function App() {
   useEffect(() => {
     if (!jobId) return;
 
+    let stopped = false;
+
     const timer = setInterval(async () => {
+      if (stopped) return;
+
       try {
-        const res = await fetch(`${API_BASE}/video-status/${jobId}`);
-        const data = await res.json();
+        const res = await fetch(`${API_BASE}/video-status/${jobId}`, {
+          cache: "no-store"
+        });
 
         if (!res.ok) {
-          throw new Error(data.error || "Failed to fetch status");
+          console.warn("Status check temporary failed:", res.status);
+          setStatusMsg("Checking video status again...");
+          return;
         }
 
+        const data = await res.json();
+
         if (data.status === "completed") {
-          setStatusMsg("? Video completed.");
+          setStatusMsg("Video completed. Please check your email.");
           clearInterval(timer);
+          stopped = true;
         } else if (data.status === "error") {
-          setStatusMsg(`? Failed: ${data.error || "Unknown error"}`);
+          setStatusMsg(`Failed: ${data.error || "Unknown error"}`);
           clearInterval(timer);
+          stopped = true;
         } else {
           setStatusMsg(`Processing... ${data.progress ?? 0}%`);
         }
       } catch (err) {
-        console.error(err);
-        setStatusMsg("Failed to check video status.");
-        clearInterval(timer);
+        console.error("Status polling error:", err);
+        setStatusMsg("Checking video status again...");
       }
     }, 3000);
 
-    return () => clearInterval(timer);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+    };
   }, [jobId]);
+
+  const getSelectedVoice = () => {
+    if (mode === "character") {
+      return characterGenderMap[character] || "female";
+    }
+
+    return "female";
+  };
 
   const buildGeneratedMessage = () => {
     if (inputMode === "exact") {
@@ -182,6 +219,8 @@ function App() {
     const finalMessage =
       inputMode === "exact" ? customText.trim() : generatedMessage.trim();
 
+    const selectedVoice = getSelectedVoice();
+
     const formData = new FormData();
     formData.append("mode", mode);
     formData.append("tone", tone);
@@ -197,7 +236,7 @@ function App() {
     formData.append("situation", inputMode === "situation" ? situation.trim() : "");
     formData.append("customText", inputMode === "exact" ? customText.trim() : "");
     formData.append("finalMessage", finalMessage);
-    formData.append("voice", "female");
+    formData.append("voice", selectedVoice);
 
     if (photoFile) {
       formData.append("photo", photoFile);
@@ -229,7 +268,6 @@ function App() {
     }
   };
 
-
   const handleProceedToPayment = async () => {
     if (!email.trim()) {
       alert("Please enter your email.");
@@ -259,6 +297,8 @@ function App() {
     const finalMessage =
       inputMode === "exact" ? customText.trim() : generatedMessage.trim();
 
+    const selectedVoice = getSelectedVoice();
+
     const payload = {
       email: email.trim(),
       messageData: {
@@ -275,7 +315,7 @@ function App() {
         situation: inputMode === "situation" ? situation.trim() : "",
         customText: inputMode === "exact" ? customText.trim() : "",
         finalMessage,
-        voice: "female"
+        voice: selectedVoice
       }
     };
 
@@ -305,6 +345,7 @@ function App() {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="app">
       <section className="hero">
@@ -623,11 +664,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
