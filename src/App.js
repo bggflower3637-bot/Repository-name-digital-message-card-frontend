@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const API_BASE =
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ||
-  "http://localhost:10000";
+  process.env.REACT_APP_API_BASE ||
+  "https://digital-message-card-server.onrender.com";
 
 const characterGroups = {
   asian: [
@@ -623,6 +623,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
