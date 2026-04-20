@@ -68,6 +68,7 @@ function App() {
   const [generatedMessage, setGeneratedMessage] = useState("");
 
   const [senderName, setSenderName] = useState("");
+  const [senderGender, setSenderGender] = useState("female");
   const [recipientName, setRecipientName] = useState("");
   const [email, setEmail] = useState("");
   const [senderPhone, setSenderPhone] = useState("");
@@ -228,6 +229,8 @@ function App() {
     formData.append("group", mode === "character" ? group : "");
     formData.append("character", mode === "character" ? character : "");
     formData.append("senderName", senderName.trim());
+    formData.append("senderGender", senderGender);
+    formData.append("senderGender", senderGender);
     formData.append("recipientName", recipientName.trim());
     formData.append("email", email.trim());
     formData.append("senderPhone", senderPhone.trim());
@@ -308,6 +311,8 @@ function App() {
         group: mode === "character" ? group : "",
         character: mode === "character" ? character : "",
         senderName: senderName.trim(),
+        senderGender: senderGender,
+        senderGender: senderGender,
         recipientName: recipientName.trim(),
         recipientEmail: recipientEmail.trim(),
         senderPhone: senderPhone.trim(),
@@ -500,6 +505,16 @@ function App() {
           onChange={(e) => setSenderName(e.target.value)}
         />
 
+        <label className="label">Gender</label>
+        <select
+          className="input"
+          value={senderGender}
+          onChange={(e) => setSenderGender(e.target.value)}
+        >
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+        </select>
+
         <label className="label">Phone</label>
         <input
           className="input"
@@ -664,3 +679,13 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+
