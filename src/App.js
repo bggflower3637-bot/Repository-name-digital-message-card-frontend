@@ -69,6 +69,8 @@ function App() {
 
   const [senderName, setSenderName] = useState("");
   const [senderGender, setSenderGender] = useState("female");
+  const [voiceMode, setVoiceMode] = useState("auto");
+  const [voiceStyle, setVoiceStyle] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [email, setEmail] = useState("");
   const [senderPhone, setSenderPhone] = useState("");
@@ -230,7 +232,11 @@ function App() {
     formData.append("character", mode === "character" ? character : "");
     formData.append("senderName", senderName.trim());
     formData.append("senderGender", senderGender);
+    formData.append("voiceMode", voiceMode);
+    formData.append("voiceStyle", voiceStyle);
     formData.append("senderGender", senderGender);
+    formData.append("voiceMode", voiceMode);
+    formData.append("voiceStyle", voiceStyle);
     formData.append("recipientName", recipientName.trim());
     formData.append("email", email.trim());
     formData.append("senderPhone", senderPhone.trim());
@@ -312,7 +318,11 @@ function App() {
         character: mode === "character" ? character : "",
         senderName: senderName.trim(),
         senderGender: senderGender,
+        voiceMode: voiceMode,
+        voiceStyle: voiceStyle,
         senderGender: senderGender,
+        voiceMode: voiceMode,
+        voiceStyle: voiceStyle,
         recipientName: recipientName.trim(),
         recipientEmail: recipientEmail.trim(),
         senderPhone: senderPhone.trim(),
@@ -515,6 +525,42 @@ function App() {
           <option value="male">Male</option>
         </select>
 
+        <label className="label">Voice Mode</label>
+        <select
+          className="input"
+          value={voiceMode}
+          onChange={(e) => setVoiceMode(e.target.value)}
+        >
+          <option value="auto">Auto match tone</option>
+          <option value="manual">Choose manually</option>
+        </select>
+
+        {voiceMode === "manual" && (
+          <>
+            <label className="label">Voice Style</label>
+            <select
+              className="input"
+              value={voiceStyle}
+              onChange={(e) => setVoiceStyle(e.target.value)}
+            >
+              <option value="">Select a voice</option>
+              {senderGender === "male" ? (
+                <>
+                  <option value="male_deep">Deep</option>
+                  <option value="male_gentle">Gentle</option>
+                  <option value="male_friendly">Friendly</option>
+                </>
+              ) : (
+                <>
+                  <option value="female_soft">Soft</option>
+                  <option value="female_elegant">Elegant</option>
+                  <option value="female_bright">Bright</option>
+                </>
+              )}
+            </select>
+          </>
+        )}
+
         <label className="label">Phone</label>
         <input
           className="input"
@@ -679,6 +725,14 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
 
 
 
