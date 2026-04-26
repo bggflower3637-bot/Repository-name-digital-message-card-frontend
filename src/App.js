@@ -298,10 +298,7 @@ function App() {
       return;
     }
 
-    if (mode === "photo") {
-      alert("Photo mode payment not ready yet.");
-      return;
-    }
+    
 
     const finalMessage =
       inputMode === "exact" ? customText.trim() : generatedMessage.trim();
@@ -704,14 +701,10 @@ function App() {
         <button
           type="button"
           className="createBtn createBtn-submit"
-          onClick={mode === "photo" ? handleSubmit : handleProceedToPayment}
+          onClick={handleProceedToPayment}
           disabled={isSubmitting}
         >
-          {isSubmitting
-            ? "Processing..."
-            : mode === "photo"
-              ? "Create My Video"
-              : "Proceed to Payment"}
+          {isSubmitting ? "Processing..." : "Proceed to Payment"}
         </button>
 
         <div className="actionNote">
@@ -725,6 +718,14 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
 
 
 
