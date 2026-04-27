@@ -258,7 +258,7 @@ function App() {
             return base ? `${base} ${data.text}` : data.text;
           });
 
-          setStatusMsg("Your words were added. Review them, then click Generate Message.");
+          setStatusMsg("Your words were added. Review them, then click ✨ Polish My Message.");
         } catch (error) {
           console.error(error);
           setStatusMsg(error.message || "Voice input failed. Please type instead.");
@@ -301,7 +301,7 @@ function App() {
     const data = await res.json();
 
     if (!res.ok || !data.ok) {
-      throw new Error(data.error || "Failed to generate message");
+      throw new Error(data.error || "Failed to ✨ Polish My Message");
     }
 
     setGeneratedMessage(data.message);
@@ -309,7 +309,7 @@ function App() {
 
   } catch (error) {
     console.error(error);
-    setStatusMsg("Failed to generate message.");
+    setStatusMsg("Failed to ✨ Polish My Message.");
   }
 };
 
@@ -811,12 +811,20 @@ function App() {
           </>
         )}
 
-        <button type="button" className="createBtn createBtn-generate" onClick={handleGenerateMessage}>
-          Generate Message
-        </button>
+        {inputMode === "ai" && (
+  <button className="createBtn" onClick={handleGenerateMessage}>
+    ✨ Polish My Message
+  </button>
+)}
 
         <div className="actionNote">
           Preview the message first so you can review the wording before creating the video.
+
+{inputMode === "exact" && (
+  <div style={{marginTop:8, fontSize:13, opacity:0.7}}>
+    Your exact words will be used in the video.
+  </div>
+)}
         </div>
 
         {generatedMessage && (
@@ -853,6 +861,9 @@ function App() {
 }
 
 export default App;
+
+
+
 
 
 
