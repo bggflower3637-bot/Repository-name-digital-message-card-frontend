@@ -359,7 +359,7 @@ function App() {
     <div className="app">
       <section className="hero">
         <div className="badge">AI Talking Message</div>
-        <h1>Create a Talking Video Message That Feels Personal</h1>
+        <h1>Not sure what to say?</h1>
         <p className="subtitle">
           Upload a photo, choose a character, or make a quick emotional video message.
         </p>
