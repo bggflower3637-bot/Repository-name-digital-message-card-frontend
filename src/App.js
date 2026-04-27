@@ -226,7 +226,7 @@ function App() {
             return base ? `${base} ${data.text}` : data.text;
           });
 
-          setStatusMsg("Voice added. Now click Generate Message.");
+          setStatusMsg("Your words were added. Review them, then click Generate Message.");
         } catch (error) {
           console.error(error);
           setStatusMsg(error.message || "Voice input failed. Please type instead.");
@@ -735,7 +735,7 @@ function App() {
               🎙 Say it in your own words
             </button>
             <p className="note">
-              Enter sender and recipient details first, then describe the situation.
+              Speak for a few seconds. Your words will appear here after recording.
             </p>
           </>
         )}
