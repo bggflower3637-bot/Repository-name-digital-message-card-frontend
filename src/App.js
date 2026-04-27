@@ -277,24 +277,41 @@ function App() {
     }
   };
 
-  const handleGenerateMessage = () => {
-    if (inputMode === "exact") {
-      if (!customText.trim()) {
-        alert("Please type your exact message first.");
-        return;
-      }
-      setGeneratedMessage(customText.trim());
-      return;
+  const handleGenerateMessage = async () => {
+  if (!situation.trim()) {
+    alert("Please describe the situation first.");
+    return;
+  }
+
+  try {
+    setStatusMsg("Writing your message...");
+
+    const res = await fetch(`${API_BASE}/polish-message`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        situation,
+        tone,
+        sender: senderName.trim(), recipient: recipientName.trim()
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      throw new Error(data.error || "Failed to generate message");
     }
 
-    if (!situation.trim()) {
-      alert("Please describe the situation first.");
-      return;
-    }
+    setGeneratedMessage(data.message);
+    setStatusMsg("Message ready ✨");
 
-    const message = buildGeneratedMessage();
-    setGeneratedMessage(message);
-  };
+  } catch (error) {
+    console.error(error);
+    setStatusMsg("Failed to generate message.");
+  }
+};
 
   const handleSubmit = async () => {
     if (!email.trim()) {
@@ -836,6 +853,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 
