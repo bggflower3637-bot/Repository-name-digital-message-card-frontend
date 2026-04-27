@@ -82,6 +82,7 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
   const [jobId, setJobId] = useState("");
+  const [isListening, setIsListening] = useState(false);
 
   const chars = characterGroups[group];
 
@@ -171,6 +172,77 @@ function App() {
       case "warm":
       default:
         return `Hi ${recipient}, it's ${sender}. ${situationText} I just wanted to tell you that I've been thinking about you a lot lately, and I miss you. I hope we can talk soon.`;
+    }
+  };
+
+  const handleSpeakSituation = async () => {
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        alert("Microphone recording is not supported on this browser.");
+        return;
+      }
+
+      setStatusMsg("Recording... please speak for a few seconds.");
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      const chunks = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        try {
+          stream.getTracks().forEach((track) => track.stop());
+
+          const audioBlob = new Blob(chunks, { type: "audio/webm" });
+
+          if (!audioBlob.size) {
+            setStatusMsg("No voice was recorded. Please try again.");
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("audio", audioBlob, "voice.webm");
+
+          setStatusMsg("Turning your voice into text...");
+
+          const res = await fetch(`${API_BASE}/transcribe-audio`, {
+            method: "POST",
+            body: formData
+          });
+
+          const data = await res.json();
+
+          if (!res.ok || !data.ok || !data.text) {
+            throw new Error(data.error || "Could not understand voice.");
+          }
+
+          setSituation((prev) => {
+            const base = prev.trim();
+            return base ? `${base} ${data.text}` : data.text;
+          });
+
+          setStatusMsg("Voice added. Now click Generate Message.");
+        } catch (error) {
+          console.error(error);
+          setStatusMsg(error.message || "Voice input failed. Please type instead.");
+        }
+      };
+
+      mediaRecorder.start();
+
+      setTimeout(() => {
+        if (mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+        }
+      }, 7000);
+    } catch (error) {
+      console.error(error);
+      setStatusMsg("Microphone error. Please allow microphone access or type instead.");
     }
   };
 
@@ -653,6 +725,15 @@ function App() {
               value={situation}
               onChange={(e) => setSituation(e.target.value)}
             />
+
+            <button
+              type="button"
+              className="createBtn"
+              onClick={handleSpeakSituation}
+              style={{ marginTop: "12px" }}
+            >
+              🎙 Say it in your own words
+            </button>
             <p className="note">
               Enter sender and recipient details first, then describe the situation.
             </p>
@@ -715,6 +796,14 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
 
 
 
