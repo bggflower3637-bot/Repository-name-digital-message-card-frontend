@@ -179,12 +179,18 @@ function App() {
     }
   };
 
+  const stopVoiceRecording = () => {
+    const recorder = mediaRecorderRef.current;
+
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop();
+      setStatusMsg("Recording finished. Turning your voice into text...");
+    }
+  };
+
   const handleSpeakSituation = async () => {
     if (isListening) {
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
-      }
-      setStatusMsg("Recording finished. Turning your voice into text...");
+      stopVoiceRecording();
       return;
     }
 
@@ -219,6 +225,8 @@ function App() {
           }
 
           setIsListening(false);
+          mediaRecorderRef.current = null;
+
           setStatusMsg("Turning your voice into text...");
 
           const audioBlob = new Blob(chunks, { type: "audio/webm" });
@@ -251,14 +259,22 @@ function App() {
         } catch (error) {
           console.error(error);
           setIsListening(false);
+          mediaRecorderRef.current = null;
           setStatusMsg(error.message || "Voice input failed. Please type instead.");
         }
       };
 
       mediaRecorder.start();
+
+      setTimeout(() => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+          stopVoiceRecording();
+        }
+      }, 15000);
     } catch (error) {
       console.error(error);
       setIsListening(false);
+      mediaRecorderRef.current = null;
       setStatusMsg("Microphone error. Please allow microphone access or type instead.");
     }
   };
@@ -813,6 +829,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 
