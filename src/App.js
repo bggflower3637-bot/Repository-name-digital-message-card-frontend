@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const API_BASE =
@@ -82,6 +82,10 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
   const [jobId, setJobId] = useState("");
+  const [isListening, setIsListening] = useState(false);
+
+  const mediaRecorderRef = useRef(null);
+  const recordingStreamRef = useRef(null);
   const [isListening, setIsListening] = useState(false);
 
   const chars = characterGroups[group];
@@ -176,16 +180,29 @@ function App() {
   };
 
   const handleSpeakSituation = async () => {
+    if (isListening) {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+        mediaRecorderRef.current.stop();
+      }
+      setStatusMsg("Recording finished. Turning your voice into text...");
+      return;
+    }
+
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
         alert("Microphone recording is not supported on this browser.");
         return;
       }
 
-      setStatusMsg("Recording... please speak for a few seconds.");
+      setIsListening(true);
+      setStatusMsg("Recording... speak now, then click Done speaking.");
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recordingStreamRef.current = stream;
+
       const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+
       const chunks = [];
 
       mediaRecorder.ondataavailable = (event) => {
@@ -196,7 +213,13 @@ function App() {
 
       mediaRecorder.onstop = async () => {
         try {
-          stream.getTracks().forEach((track) => track.stop());
+          if (recordingStreamRef.current) {
+            recordingStreamRef.current.getTracks().forEach((track) => track.stop());
+            recordingStreamRef.current = null;
+          }
+
+          setIsListening(false);
+          setStatusMsg("Turning your voice into text...");
 
           const audioBlob = new Blob(chunks, { type: "audio/webm" });
 
@@ -207,8 +230,6 @@ function App() {
 
           const formData = new FormData();
           formData.append("audio", audioBlob, "voice.webm");
-
-          setStatusMsg("Turning your voice into text...");
 
           const res = await fetch(`${API_BASE}/transcribe-audio`, {
             method: "POST",
@@ -229,19 +250,15 @@ function App() {
           setStatusMsg("Your words were added. Review them, then click Generate Message.");
         } catch (error) {
           console.error(error);
+          setIsListening(false);
           setStatusMsg(error.message || "Voice input failed. Please type instead.");
         }
       };
 
       mediaRecorder.start();
-
-      setTimeout(() => {
-        if (mediaRecorder.state !== "inactive") {
-          mediaRecorder.stop();
-        }
-      }, 7000);
     } catch (error) {
       console.error(error);
+      setIsListening(false);
       setStatusMsg("Microphone error. Please allow microphone access or type instead.");
     }
   };
@@ -732,7 +749,7 @@ function App() {
               onClick={handleSpeakSituation}
               style={{ marginTop: "12px" }}
             >
-              🎙 Say it in your own words
+              {isListening ? "✅ Done speaking" : "🎙 Say it in your own words"}
             </button>
             <p className="note">
               Speak for a few seconds. Your words will appear here after recording.
@@ -796,6 +813,10 @@ function App() {
 }
 
 export default App;
+
+
+
+
 
 
 
