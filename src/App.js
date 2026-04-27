@@ -317,9 +317,6 @@ function App() {
         senderGender: senderGender,
         voiceMode: voiceMode,
         voiceStyle: voiceStyle,
-        senderGender: senderGender,
-        voiceMode: voiceMode,
-        voiceStyle: voiceStyle,
         recipientName: recipientName.trim(),
         recipientEmail: recipientEmail.trim(),
         senderPhone: senderPhone.trim(),
@@ -718,6 +715,9 @@ function App() {
 }
 
 export default App;
+
+
+
 
 
 
