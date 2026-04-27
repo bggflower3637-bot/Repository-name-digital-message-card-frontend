@@ -86,7 +86,7 @@ function App() {
 
   const mediaRecorderRef = useRef(null);
   const recordingStreamRef = useRef(null);
-  const [isListening, setIsListening] = useState(false);
+  
 
   const chars = characterGroups[group];
 
@@ -813,6 +813,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 
