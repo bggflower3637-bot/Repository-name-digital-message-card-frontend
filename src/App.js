@@ -811,7 +811,7 @@ function App() {
           </>
         )}
 
-        {inputMode === "ai" && (
+        {inputMode === "situation" && (
   <button className="createBtn" onClick={handleGenerateMessage}>
     ✨ Polish My Message
   </button>
@@ -861,6 +861,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
