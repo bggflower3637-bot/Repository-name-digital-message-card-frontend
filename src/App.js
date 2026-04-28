@@ -6,6 +6,25 @@ const API_BASE =
   process.env.REACT_APP_API_URL ||
   "https://digital-message-card-server.onrender.com";
 
+const characterGroups = {
+  asian: [
+    { id: "aria", name: "Aria", image: "/characters/asian/aria.jpg" },
+    { id: "jae", name: "Jae", image: "/characters/asian/jae.jpg" },
+    { id: "mina", name: "Mina", image: "/characters/asian/mina.jpg" },
+    { id: "reo", name: "Reo", image: "/characters/asian/reo.jpg" },
+    { id: "ryu", name: "Ryu", image: "/characters/asian/ryu.jpg" },
+    { id: "soo", name: "Soo", image: "/characters/asian/soo.jpg" }
+  ],
+  western: [
+    { id: "wm1", name: "Daniel", image: "/characters/western/wm1.jpg" },
+    { id: "wm2", name: "Chris", image: "/characters/western/wm2.jpg" },
+    { id: "bm1", name: "Marcus", image: "/characters/western/bm1.jpg" },
+    { id: "wf1", name: "Emma", image: "/characters/western/wf1.jpg" },
+    { id: "wf2", name: "Sophie", image: "/characters/western/wf2.jpg" },
+    { id: "bf1", name: "Ava", image: "/characters/western/bf1.jpg" }
+  ]
+};
+
 const tones = [
   { id: "warm", label: "Warm", desc: "Soft and heartfelt" },
   { id: "romantic", label: "Romantic", desc: "Sweet and loving" },
@@ -26,6 +45,8 @@ function App() {
   const [mode, setMode] = useState("quick");
   const [selectedProduct, setSelectedProduct] = useState("video");
   const [tone, setTone] = useState("warm");
+  const [group, setGroup] = useState("asian");
+  const [character, setCharacter] = useState("aria");
   const [inputMode, setInputMode] = useState("situation");
 
   const [situation, setSituation] = useState("");
@@ -53,6 +74,8 @@ function App() {
   const mediaRecorderRef = useRef(null);
   const recordingStreamRef = useRef(null);
   const voiceChunksRef = useRef([]);
+
+  const chars = characterGroups[group];
 
   const previewUrl = useMemo(() => {
     if (!photoFile) return "";
@@ -219,7 +242,7 @@ function App() {
 
     const payload = {
       email: email.trim(),
-      type: mode === "photo" ? "photo" : "quick",
+      type: mode === "quick" ? "quick" : "photo",
       messageData: {
         mode,
         tone,
@@ -393,6 +416,15 @@ function App() {
             <div className="modeTitle">Photo Video — $9.99</div>
             <div className="modeDesc">Upload a photo for a talking photo video.</div>
           </button>
+
+          <button
+            type="button"
+            className={`modeCard mode-character ${mode === "character" ? "active" : ""}`}
+            onClick={() => setMode("character")}
+          >
+            <div className="modeTitle">Character Video — $9.99</div>
+            <div className="modeDesc">Choose a ready-made character for the video.</div>
+          </button>
         </div>
 
         {mode === "photo" && (
@@ -415,7 +447,59 @@ function App() {
         )}
       </section>
 
+      
       <section className="section cardWrap">
+        {mode === "character" && (
+          <>
+            <h2>Select Character</h2>
+            <p className="note">Choose a character to speak your message.</p>
+
+            <div className="tabRow">
+              <button
+                type="button"
+                className={`tabBtn charGroupTab group-asian ${group === "asian" ? "active" : ""}`}
+                onClick={() => {
+                  setGroup("asian");
+                  setCharacter("aria");
+                }}
+              >
+                Asian
+              </button>
+
+              <button
+                type="button"
+                className={`tabBtn charGroupTab group-western ${group === "western" ? "active" : ""}`}
+                onClick={() => {
+                  setGroup("western");
+                  setCharacter("wm1");
+                }}
+              >
+                Western
+              </button>
+            </div>
+
+            <div className="grid">
+              {chars.map((c) => (
+                <button
+                  type="button"
+                  key={c.id}
+                  onClick={() => setCharacter(c.id)}
+                  className={character === c.id ? "card selected" : "card"}
+                >
+                  <img src={c.image} alt={c.name} className="characterImage" />
+                  <p>{c.name}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="selectedCharBox">
+              Selected character: {chars.find((c) => c.id === character)?.name}
+            </div>
+          </>
+        )}
+      </section>
+
+<section className="section cardWrap">
         <h2>Message Style</h2>
         <div className="toneGrid">
           {tones.map((t) => (
