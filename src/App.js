@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const API_BASE =
@@ -24,6 +24,7 @@ const demos = {
 
 function App() {
   const [mode, setMode] = useState("quick");
+  const [selectedProduct, setSelectedProduct] = useState("video");
   const [tone, setTone] = useState("warm");
   const [inputMode, setInputMode] = useState("situation");
 
@@ -218,6 +219,7 @@ function App() {
 
     const payload = {
       email: email.trim(),
+      type: mode === "photo" ? "photo" : "quick",
       messageData: {
         mode,
         tone,
@@ -367,8 +369,7 @@ function App() {
             />
           </>
         )}
-
-        {statusMsg && <p className="statusMsg">{statusMsg}</p>}
+{statusMsg && <p className="statusMsg">{statusMsg}</p>}
       </section>
 
       <section className="section cardWrap">
@@ -380,8 +381,8 @@ function App() {
             className={`modeCard mode-quick ${mode === "quick" ? "active" : ""}`}
             onClick={() => setMode("quick")}
           >
-            <div className="modeTitle">Quick Video</div>
-            <div className="modeDesc">Fast emotional video message.</div>
+            <div className="modeTitle">Quick Video — $4.99</div>
+            <div className="modeDesc">Text or voice input. We add voice, music, and video.</div>
           </button>
 
           <button
@@ -389,8 +390,8 @@ function App() {
             className={`modeCard mode-photo ${mode === "photo" ? "active" : ""}`}
             onClick={() => setMode("photo")}
           >
-            <div className="modeTitle">Photo Video</div>
-            <div className="modeDesc">Upload a real photo for a personal video.</div>
+            <div className="modeTitle">Photo Video — $9.99</div>
+            <div className="modeDesc">Upload a photo for a talking photo video.</div>
           </button>
         </div>
 

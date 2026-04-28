@@ -733,3 +733,32 @@ textarea.input {
   border-color: rgba(94, 127, 166, 0.34);
   color: #dbe8f6;
 }
+
+.pricingBox {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.priceCard {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #444;
+  background: #111;
+  color: white;
+  cursor: pointer;
+}
+
+.priceCard.active {
+  border: 2px solid #ff6b8a;
+}
+
+.priceTitle {
+  font-weight: bold;
+}
+
+.priceAmount {
+  font-size: 20px;
+  margin-top: 5px;
+}
