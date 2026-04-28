@@ -242,7 +242,7 @@ function App() {
 
     const payload = {
       email: email.trim(),
-      type: mode === "quick" ? "quick" : "photo",
+      type: mode,
       messageData: {
         mode,
         tone,
