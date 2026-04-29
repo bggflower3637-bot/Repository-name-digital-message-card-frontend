@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const API_BASE =
@@ -268,14 +268,19 @@ function App() {
       setIsSubmitting(true);
       setStatusMsg("Redirecting to payment...");
 
-      const res = await fetch(`${API_BASE}/create-checkout-session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
+      const checkoutFormData = new FormData();
+      checkoutFormData.append("email", payload.email);
+      checkoutFormData.append("type", payload.type);
+      checkoutFormData.append("messageData",     JSON.stringify(payload.messageData));
 
+if (mode === "photo" && photoFile) {
+  checkoutFormData.append("photo", photoFile);
+}
+
+const res = await fetch(`${API_BASE}/create-checkout-session`, {
+  method: "POST",
+  body: checkoutFormData
+});
       const data = await res.json();
 
       if (!res.ok || !data.url) {
