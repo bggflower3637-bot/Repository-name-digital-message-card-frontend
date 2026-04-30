@@ -70,12 +70,61 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
   const [isListening, setIsListening] = useState(false);
+const [micLevel, setMicLevel] = useState(0);
 
   const mediaRecorderRef = useRef(null);
+const audioContextRef = useRef(null);
+const analyserRef = useRef(null);
+const waveAnimationRef = useRef(null);
   const recordingStreamRef = useRef(null);
   const voiceChunksRef = useRef([]);
 
   const chars = characterGroups[group];
+
+  const startMicWave = (stream) => {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+      const source = audioContext.createMediaStreamSource(stream);
+
+      analyser.fftSize = 256;
+      source.connect(analyser);
+
+      audioContextRef.current = audioContext;
+      analyserRef.current = analyser;
+
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      const updateWave = () => {
+        analyser.getByteFrequencyData(dataArray);
+        const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+        setMicLevel(Math.min(100, Math.round(average)));
+        waveAnimationRef.current = requestAnimationFrame(updateWave);
+      };
+
+      updateWave();
+    } catch (error) {
+      console.error("Mic wave failed:", error);
+    }
+  };
+
+  const stopMicWave = () => {
+    if (waveAnimationRef.current) {
+      cancelAnimationFrame(waveAnimationRef.current);
+      waveAnimationRef.current = null;
+    }
+
+    if (audioContextRef.current) {
+      audioContextRef.current.close().catch(() => {});
+      audioContextRef.current = null;
+    }
+
+    analyserRef.current = null;
+    setMicLevel(0);
+  };
 
   const previewUrl = useMemo(() => {
     if (!photoFile) return "";
@@ -108,6 +157,7 @@ function App() {
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       recordingStreamRef.current = stream;
+      startMicWave(stream);
 
       setIsListening(true);
       setStatusMsg("Recording... speak now, then click Done speaking.");
@@ -129,6 +179,7 @@ function App() {
           }
 
           setIsListening(false);
+          stopMicWave();
 
           const audioBlob = new Blob(voiceChunksRef.current, { type: "audio/webm" });
           if (!audioBlob.size) {
@@ -165,6 +216,7 @@ function App() {
           mediaRecorderRef.current = null;
           voiceChunksRef.current = [];
           setIsListening(false);
+          stopMicWave();
         }
       };
 
@@ -172,6 +224,7 @@ function App() {
     } catch (error) {
       console.error(error);
       setIsListening(false);
+          stopMicWave();
       setStatusMsg("Microphone error. Please allow microphone access or type instead.");
     }
   };
@@ -184,8 +237,7 @@ function App() {
 
     try {
       setStatusMsg("Writing your message...");
-
-      const res = await fetch(`${API_BASE}/polish-message`, {
+const res = await fetch(`${API_BASE}/polish-message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -247,7 +299,11 @@ function App() {
         mode,
         tone,
         inputMode,
-        group: "",
+        
+group: group,
+character: character,
+characterImageUrl: chars.find(c => c.id === character)?.image || "",
+
         character: "",
         senderName: senderName.trim(),
         senderGender,
@@ -306,222 +362,21 @@ const res = await fetch(`${API_BASE}/create-checkout-session`, {
         </p>
       </section>
 
-      <section className="section cardWrap">
-        <h2>Start With Your Message</h2>
-
-        <div className="tabRow">
-          <button
-            type="button"
-            className={`tabBtn inputTab input-ai ${inputMode === "situation" ? "active" : ""}`}
-            onClick={() => setInputMode("situation")}
-          >
-            AI Write It For Me
-          </button>
-
-          <button
-            type="button"
-            className={`tabBtn inputTab input-exact ${inputMode === "exact" ? "active" : ""}`}
-            onClick={() => setInputMode("exact")}
-          >
-            Use My Exact Text
-          </button>
-        </div>
-
-        {inputMode === "situation" && (
-          <>
-            <label className="label">Describe the Situation</label>
-            <textarea
-              className="input"
-              rows="5"
-              placeholder="Example: I want to say sorry to my friend and tell her I miss her."
-              value={situation}
-              onChange={(e) => setSituation(e.target.value)}
-            />
-
-            {!isListening ? (
-              <button
-                type="button"
-                className="createBtn"
-                onClick={handleSpeakSituation}
-              >
-                🎙 Say it in your own words
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="createBtn"
-                onClick={finishVoiceRecording}
-              >
-                ✅ Done speaking
-              </button>
-            )}
-
-            <p className="note">
-              Speak or type a few words. Your words will appear here first.
-            </p>
-
-            <button
-              type="button"
-              className="createBtn createBtn-generate"
-              onClick={handlePolishMessage}
-            >
-              ✨ Make My Message Beautiful
-            </button>
-          </>
-        )}
-
-        {inputMode === "exact" && (
-          <>
-            <label className="label">Your Exact Message</label>
-            <textarea
-              className="input"
-              rows="5"
-              placeholder="Type the exact words you want in the video..."
-              value={customText}
-              onChange={(e) => setCustomText(e.target.value)}
-            />
-            <p className="note">
-              We’ll use your exact words in the video without rewriting them.
-            </p>
-          </>
-        )}
-
-        {generatedMessage && inputMode === "situation" && (
-          <>
-            <label className="label">Your Beautiful Message</label>
-            <textarea
-              className="input"
-              rows="5"
-              value={generatedMessage}
-              onChange={(e) => setGeneratedMessage(e.target.value)}
-            />
-          </>
-        )}
-{statusMsg && <p className="statusMsg">{statusMsg}</p>}
-      </section>
-
-      <section className="section cardWrap">
-        <h2>Create Your Video</h2>
-
-        <div className="modeGrid">
-          <button
-            type="button"
-            className={`modeCard mode-quick ${mode === "quick" ? "active" : ""}`}
-            onClick={() => setMode("quick")}
-          >
-            <div className="modeTitle">Quick Video — $4.99</div>
-            <div className="modeDesc">Text or voice input. We add voice, music, and video.</div>
-          </button>
-
-          <button
-            type="button"
-            className={`modeCard mode-photo ${mode === "photo" ? "active" : ""}`}
-            onClick={() => setMode("photo")}
-          >
-            <div className="modeTitle">Photo Video — $9.99</div>
-            <div className="modeDesc">Upload a photo for a talking photo video.</div>
-          </button>
-
-          <button
-            type="button"
-            className={`modeCard mode-character ${mode === "character" ? "active" : ""}`}
-            onClick={() => setMode("character")}
-          >
-            <div className="modeTitle">Character Video — $9.99</div>
-            <div className="modeDesc">Choose a ready-made character for the video.</div>
-          </button>
-        </div>
-
-        {mode === "photo" && (
-          <>
-            <label className="label">Upload Photo</label>
-            <input
-              className="input"
-              type="file"
-              accept="image/*"
-              onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
-            />
-            <p className="note">Photo mode may take longer and will be delivered by email.</p>
-
-            {previewUrl && (
-              <div className="previewBox">
-                <img src={previewUrl} alt="preview" className="previewImage" />
-              </div>
-            )}
-          </>
-        )}
-      </section>
+      
 
       
-      <section className="section cardWrap">
-        {mode === "character" && (
-          <>
-            <h2>Select Character</h2>
-            <p className="note">Choose a character to speak your message.</p>
 
-            <div className="tabRow">
-              <button
-                type="button"
-                className={`tabBtn charGroupTab group-asian ${group === "asian" ? "active" : ""}`}
-                onClick={() => {
-                  setGroup("asian");
-                  setCharacter("aria");
-                }}
-              >
-                Asian
-              </button>
+      
+      
 
-              <button
-                type="button"
-                className={`tabBtn charGroupTab group-western ${group === "western" ? "active" : ""}`}
-                onClick={() => {
-                  setGroup("western");
-                  setCharacter("wm1");
-                }}
-              >
-                Western
-              </button>
-            </div>
 
-            <div className="grid">
-              {chars.map((c) => (
-                <button
-                  type="button"
-                  key={c.id}
-                  onClick={() => setCharacter(c.id)}
-                  className={character === c.id ? "card selected" : "card"}
-                >
-                  <img src={c.image} alt={c.name} className="characterImage" />
-                  <p>{c.name}</p>
-                </button>
-              ))}
-            </div>
 
-            <div className="selectedCharBox">
-              Selected character: {chars.find((c) => c.id === character)?.name}
-            </div>
-          </>
-        )}
-      </section>
+      
 
-<section className="section cardWrap">
-        <h2>Message Style</h2>
-        <div className="toneGrid">
-          {tones.map((t) => (
-            <button
-              type="button"
-              key={t.id}
-              className={tone === t.id ? `toneCard active tone-${t.id}` : `toneCard tone-${t.id}`}
-              onClick={() => setTone(t.id)}
-            >
-              <strong>{t.label}</strong>
-              <span>{t.desc}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      
 
-      <section className="section cardWrap">
+      
+      <section className="section cardWrap compactInfo">
         <h2>Sender Info</h2>
 
         <label className="label">Name</label>
@@ -598,7 +453,7 @@ const res = await fetch(`${API_BASE}/create-checkout-session`, {
         />
       </section>
 
-      <section className="section cardWrap">
+      <section className="section cardWrap compactInfo">
         <h2>Recipient Info</h2>
 
         <label className="label">Name</label>
@@ -627,6 +482,271 @@ const res = await fetch(`${API_BASE}/create-checkout-session`, {
           value={recipientPhone}
           onChange={(e) => setRecipientPhone(e.target.value)}
         />
+      </section>
+
+      <section className="section cardWrap compactStyle">
+        <h2>Message Style</h2>
+        <div className="toneGrid">
+          {tones.map((t) => (
+            <button
+              type="button"
+              key={t.id}
+              className={tone === t.id ? `toneCard active tone-${t.id}` : `toneCard tone-${t.id}`}
+              onClick={() => setTone(t.id)}
+            >
+              <strong>{t.label}</strong>
+              <span>{t.desc}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      
+
+      
+
+
+      
+      <section className="section cardWrap">
+        <h2>Create Your Video</h2>
+
+        <div className="modeGrid">
+          <button
+            type="button"
+            className={`modeCard mode-quick ${mode === "quick" ? "active" : ""}`}
+            onClick={() => setMode("quick")}
+          >
+            <div className="modeTitle">Quick Video — $4.99</div>
+            <div className="modeDesc">Text or voice input. We add voice, music, and video.</div>
+          </button>
+
+          <button
+            type="button"
+            className={`modeCard mode-photo ${mode === "photo" ? "active" : ""}`}
+            onClick={() => setMode("photo")}
+          >
+            <div className="modeTitle">Photo Video — $9.99</div>
+            <div className="modeDesc">Upload a photo for a talking photo video.</div>
+          </button>
+
+          <button
+            type="button"
+            className={`modeCard mode-character ${mode === "character" ? "active" : ""}`}
+            onClick={() => setMode("character")}
+          >
+            <div className="modeTitle">Character Video — $9.99</div>
+            <div className="modeDesc">Choose a ready-made character for the video.</div>
+          </button>
+        </div>
+
+        {mode === "photo" && (
+          <>
+            <label className="label">Upload Photo</label>
+            <input
+              className="input"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
+            />
+            <p className="note">Photo mode may take longer and will be delivered by email.</p>
+
+            {previewUrl && (
+              <div className="previewBox">
+                <img src={previewUrl} alt="preview" className="previewImage" />
+              </div>
+            )}
+          </>
+        )}
+      </section>
+
+      <section className="section cardWrap">
+        {mode === "character" && (
+          <>
+            <h2>Select Character</h2>
+            <p className="note">Choose a character to speak your message.</p>
+
+            <div className="tabRow">
+              <button
+                type="button"
+                className={`tabBtn charGroupTab group-asian ${group === "asian" ? "active" : ""}`}
+                onClick={() => {
+                  setGroup("asian");
+                  setCharacter("aria");
+                }}
+              >
+                Asian
+              </button>
+
+              <button
+                type="button"
+                className={`tabBtn charGroupTab group-western ${group === "western" ? "active" : ""}`}
+                onClick={() => {
+                  setGroup("western");
+                  setCharacter("wm1");
+                }}
+              >
+                Western
+              </button>
+            </div>
+
+            <div className="grid">
+              {chars.map((c) => (
+                <button
+                  type="button"
+                  key={c.id}
+                  onClick={() => setCharacter(c.id)}
+                  className={character === c.id ? "card selected" : "card"}
+                >
+                  <img src={c.image} alt={c.name} className="characterImage" />
+                  <p>{c.name}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="selectedCharBox">
+              Selected character: {chars.find((c) => c.id === character)?.name}
+            </div>
+          </>
+        )}
+      </section>
+
+      <section className="section cardWrap">
+        <h2>Start With Your Message</h2>
+
+        <div className="tabRow">
+          <button
+            type="button"
+            className={`tabBtn inputTab input-ai ${inputMode === "situation" ? "active" : ""}`}
+            onClick={() => setInputMode("situation")}
+          >
+            AI Write It For Me
+          </button>
+
+          <button
+            type="button"
+            className={`tabBtn inputTab input-exact ${inputMode === "exact" ? "active" : ""}`}
+            onClick={() => setInputMode("exact")}
+          >
+            Use My Exact Text
+          </button>
+        </div>
+
+        {inputMode === "situation" && (
+          <>
+            <label className="label">Describe the Situation</label>
+            <textarea
+              className="input"
+              rows="5"
+              placeholder="Example: I want to say sorry to my friend and tell her I miss her."
+              value={situation}
+              onChange={(e) => setSituation(e.target.value)}
+            />
+
+            {isListening ? (
+              <div className="micRecordArea">
+                <button
+                  type="button"
+                  className="micCircleBtn recording"
+                  onClick={finishVoiceRecording}
+                  aria-label="Stop recording"
+                >
+                  ■
+                </button>
+
+                <div className="voiceWaveBars active">
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((bar) => (
+                    <span
+                      key={bar}
+                      style={{
+                        height: Math.max(8, Math.min(44, micLevel / 2 + ((bar % 5) * 4)))
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <p className="micRecordText">Recording... tap the button when finished</p>
+              </div>
+            ) : (
+              <div className="micRecordArea">
+                <button
+                  type="button"
+                  className="micCircleBtn"
+                  onClick={handleSpeakSituation}
+                  aria-label="Start recording"
+                >
+                  <svg
+                    className="micIconSvg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <rect x="9" y="3" width="6" height="10" rx="3" />
+                    <path d="M5 10v2a7 7 0 0 0 14 0v-2" />
+                    <path d="M12 19v3" />
+                    <path d="M8 22h8" />
+                  </svg>
+                </button>
+
+                <div className="voiceWaveBars">
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((bar) => (
+                    <span key={bar} style={{ height: 8 }} />
+                  ))}
+                </div>
+
+                <p className="micRecordText">Tap the mic and say it in your own words</p>
+              </div>
+            )}
+
+            <p className="note">
+              Speak or type a few words. Your words will appear here first.
+            </p>
+
+            <button
+              type="button"
+              className="createBtn createBtn-generate"
+              onClick={handlePolishMessage}
+            >
+              ✨ Make My Message Beautiful
+            </button>
+          </>
+        )}
+
+        {inputMode === "exact" && (
+          <>
+            <label className="label">Your Exact Message</label>
+            <textarea
+              className="input"
+              rows="5"
+              placeholder="Type the exact words you want in the video..."
+              value={customText}
+              onChange={(e) => setCustomText(e.target.value)}
+            />
+            <p className="note">
+              We’ll use your exact words in the video without rewriting them.
+            </p>
+          </>
+        )}
+
+        {generatedMessage && inputMode === "situation" && (
+          <>
+            <label className="label">Your Beautiful Message</label>
+            <textarea
+              className="input"
+              rows="5"
+              value={generatedMessage}
+              onChange={(e) => setGeneratedMessage(e.target.value)}
+            />
+          </>
+        )}
+{statusMsg && <p className="statusMsg">{statusMsg}</p>}
+      </section>
+
+<section className="section cardWrap finalCtaCard">
+
 
         <button
           type="button"
@@ -642,7 +762,7 @@ const res = await fetch(`${API_BASE}/create-checkout-session`, {
         </div>
       </section>
 
-      <section className="section demoSection">
+<section className="section demoSection">
         <div className="demoHeader">
           <h2>See the Demo</h2>
           <p className="demoSub">Preview different styles before creating your own video.</p>
@@ -676,3 +796,4 @@ const res = await fetch(`${API_BASE}/create-checkout-session`, {
 }
 
 export default App;
+
