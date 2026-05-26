@@ -1,0 +1,1003 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(255, 105, 145, 0.18), transparent 24%),
+    linear-gradient(180deg, #07090f 0%, #0f1320 100%);
+  color: #f5f7fb;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: none;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+.app {
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto;
+  padding: 14px 14px 28px;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 6px 4px 14px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ff8eab;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  margin: 10px auto 0;
+  color: #d3daea;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 340px;
+}
+
+/* SECTION */
+.section {
+  margin-top: 16px;
+}
+
+.section h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* PANELS */
+.demoSection,
+.cardWrap {
+  background: rgba(20, 25, 40, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 14px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(10px);
+}
+
+/* DEMO */
+.demoHeader {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.demoSub {
+  margin: 4px 0 0;
+  color: #c9d1e0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.demoTabs,
+.tabRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.demoTabs {
+  margin-bottom: 12px;
+}
+
+.tabBtn {
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #f5f7fb;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tabBtn.active {
+  background: linear-gradient(135deg, #ff5e87, #ff8aa5);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 10px 22px rgba(255, 94, 135, 0.25);
+}
+
+.demoVideoWrap {
+  width: 100%;
+}
+
+.demoVideo {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border-radius: 20px;
+  background: #000;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.demoVideo.contain {
+  object-fit: contain;
+  background: #000;
+}
+
+/* MODE */
+.modeGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.modeCard {
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  text-align: left;
+  color: #f5f7fb;
+  cursor: pointer;
+}
+
+.modeCard.active {
+  border-color: rgba(255, 94, 135, 0.9);
+  box-shadow: 0 0 0 2px rgba(255, 94, 135, 0.14);
+}
+
+.modeTitle {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+
+.modeDesc {
+  color: #d5dceb;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* TONE */
+.toneGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.toneCard {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  color: #f5f7fb;
+  text-align: center;
+  cursor: pointer;
+}
+
+.toneCard.active {
+  border-color: rgba(255, 94, 135, 0.9);
+  box-shadow: 0 0 0 2px rgba(255, 94, 135, 0.14);
+}
+
+.toneCard strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.toneCard span {
+  display: block;
+  color: #d5dceb;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* INPUTS */
+.label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.note {
+  margin: 8px 0 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #d3daea;
+}
+
+.input {
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(27, 33, 52, 0.95);
+  color: #ffffff;
+  outline: none;
+  font-size: 14px;
+}
+
+.input::placeholder {
+  color: #b7c0d3;
+}
+
+.input:focus {
+  border-color: rgba(255, 94, 135, 0.9);
+  box-shadow: 0 0 0 4px rgba(255, 94, 135, 0.12);
+}
+
+textarea.input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* FORM GRID */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+/* PHOTO PREVIEW */
+.previewBox {
+  margin-top: 8px;
+  width: 100%;
+  max-width: 220px;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.previewImage {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+/* CHARACTER */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.card {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  color: #f5f7fb;
+  text-align: center;
+  cursor: pointer;
+}
+
+.card.selected {
+  border-color: rgba(255, 94, 135, 0.9);
+  box-shadow: 0 0 0 2px rgba(255, 94, 135, 0.14);
+}
+
+.characterImage {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.card p {
+  margin: 8px 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.selectedCharBox {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 94, 135, 0.12);
+  border: 1px solid rgba(255, 94, 135, 0.45);
+  color: #ffd9e3;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* BUTTONS */
+.createBtn {
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ff5e87, #ff8aa5);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 16px 28px rgba(255, 94, 135, 0.24);
+}
+
+.createBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.statusMsg {
+  margin: 0 0 10px;
+  color: #ffd1dc;
+  font-size: 13px;
+}
+
+/* DESKTOP PREVIEW */
+@media (min-width: 768px) {
+  .app {
+    max-width: 400px;
+    padding-top: 18px;
+    padding-bottom: 34px;
+  }
+}
+
+.infoSection {
+  margin-top: 20px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row input {
+  flex: 1;
+}
+
+.sectionTitle {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.actionNote {
+  margin-top: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.82);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ===== ACTIVE UI COLOR UPDATE ===== */
+
+/* Message input tabs / general active tabs -> blue */
+.tabBtn.active {
+  background: linear-gradient(135deg, #4f8cff, #7aa8ff);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 10px 22px rgba(79, 140, 255, 0.25);
+}
+
+/* Inputs focus -> blue */
+.input:focus {
+  border-color: rgba(79, 140, 255, 0.95);
+  box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.14);
+}
+
+/* Mode selected -> blue */
+.modeCard.active {
+  border-color: rgba(79, 140, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.16);
+}
+
+/* Character selected -> blue */
+.card.selected {
+  border-color: rgba(79, 140, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.16);
+}
+
+/* Tone-specific active colors */
+.toneCard.tone-warm.active {
+  border-color: rgba(255, 209, 74, 0.95);
+  box-shadow: 0 0 0 2px rgba(255, 209, 74, 0.18);
+  background: rgba(255, 209, 74, 0.08);
+}
+
+.toneCard.tone-romantic.active {
+  border-color: rgba(255, 120, 170, 0.95);
+  box-shadow: 0 0 0 2px rgba(255, 120, 170, 0.18);
+  background: rgba(255, 120, 170, 0.08);
+}
+
+.toneCard.tone-sympathy.active {
+  border-color: rgba(235, 240, 245, 0.95);
+  box-shadow: 0 0 0 2px rgba(235, 240, 245, 0.15);
+  background: rgba(235, 240, 245, 0.08);
+}
+
+.toneCard.tone-playful.active {
+  border-color: rgba(255, 165, 79, 0.95);
+  box-shadow: 0 0 0 2px rgba(255, 165, 79, 0.18);
+  background: rgba(255, 165, 79, 0.08);
+}
+
+.toneCard.tone-calm.active {
+  border-color: rgba(110, 200, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(110, 200, 255, 0.18);
+  background: rgba(110, 200, 255, 0.08);
+}
+
+/* =========================
+   COLOR SYSTEM UPDATE
+========================= */
+
+/* Demo tabs */
+.demoTab.demo-birthday.active {
+  background: linear-gradient(135deg, #4f8cff, #79a8ff);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(79, 140, 255, 0.25);
+}
+
+.demoTab.demo-romantic.active {
+  background: linear-gradient(135deg, #ff6fa8, #ff9ac0);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(255, 111, 168, 0.25);
+}
+
+.demoTab.demo-sympathy.active {
+  background: linear-gradient(135deg, #f5f7fb, #dfe6f2);
+  border-color: transparent;
+  color: #101828;
+  box-shadow: 0 10px 22px rgba(223, 230, 242, 0.22);
+}
+
+.demoTab.demo-kpop.active {
+  background: linear-gradient(135deg, #5b8cff, #6ed0ff);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(91, 140, 255, 0.25);
+}
+
+.demoTab.demo-quick.active {
+  background: linear-gradient(135deg, #9b6bff, #c08bff);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(155, 107, 255, 0.25);
+}
+
+/* Mode cards */
+.modeCard.mode-photo.active {
+  border-color: rgba(79, 140, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.16);
+  background: rgba(79, 140, 255, 0.08);
+}
+
+.modeCard.mode-quick.active {
+  border-color: rgba(255, 111, 168, 0.95);
+  box-shadow: 0 0 0 2px rgba(255, 111, 168, 0.16);
+  background: rgba(255, 111, 168, 0.08);
+}
+
+.modeCard.mode-character.active {
+  border-color: rgba(235, 240, 245, 0.95);
+  box-shadow: 0 0 0 2px rgba(235, 240, 245, 0.14);
+  background: rgba(235, 240, 245, 0.08);
+}
+
+/* Input mode tabs */
+.inputTab.input-ai.active {
+  background: linear-gradient(135deg, #4f8cff, #79a8ff);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(79, 140, 255, 0.25);
+}
+
+.inputTab.input-exact.active {
+  background: linear-gradient(135deg, #ffd24d, #ffea8a);
+  border-color: transparent;
+  color: #101828;
+  box-shadow: 0 10px 22px rgba(255, 210, 77, 0.25);
+}
+
+/* Keep generic selected/focus colors cleaner */
+.tabBtn.active {
+  color: #ffffff;
+}
+
+.input:focus {
+  border-color: rgba(79, 140, 255, 0.95);
+  box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.14);
+}
+
+.card.selected {
+  border-color: rgba(79, 140, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.16);
+}
+
+/* =========================
+   FINAL COLOR TWEAK
+========================= */
+
+/* Character group tabs */
+.charGroupTab.group-asian.active {
+  background: linear-gradient(135deg, #d8b892, #ead3b3);
+  border-color: transparent;
+  color: #3a2a1c;
+  box-shadow: 0 10px 22px rgba(216, 184, 146, 0.25);
+}
+
+.charGroupTab.group-western.active {
+  background: linear-gradient(135deg, #6d9cff, #9fc2ff);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(109, 156, 255, 0.25);
+}
+
+/* Bottom action buttons */
+.createBtn.createBtn-generate {
+  background: linear-gradient(135deg, #ff6fa8, #ff9ac0);
+  box-shadow: 0 16px 28px rgba(255, 111, 168, 0.24);
+}
+
+.createBtn.createBtn-submit {
+  background: linear-gradient(135deg, #4f8cff, #79a8ff);
+  box-shadow: 0 16px 28px rgba(79, 140, 255, 0.24);
+}
+
+/* =========================
+   LUXURY PALETTE REFINEMENT
+========================= */
+
+/* Base active buttons: calmer, more premium */
+.tabBtn {
+  transition: all 0.18s ease;
+}
+
+.tabBtn.active {
+  color: #ffffff;
+}
+
+/* Demo tabs */
+.demoTab.demo-birthday.active,
+.demoTab.demo-kpop.active {
+  background: linear-gradient(135deg, #5e7fa6, #88a4c4);
+  box-shadow: 0 10px 22px rgba(94, 127, 166, 0.24);
+}
+
+.demoTab.demo-romantic.active,
+.createBtn.createBtn-generate,
+.modeCard.mode-quick.active {
+  background: linear-gradient(135deg, #b86b7d, #d18d9d);
+  box-shadow: 0 10px 22px rgba(184, 107, 125, 0.24);
+}
+
+.demoTab.demo-sympathy.active,
+.modeCard.mode-character.active {
+  background: linear-gradient(135deg, #f3f1ee, #ded9d2);
+  color: #2f3440;
+  box-shadow: 0 10px 22px rgba(222, 217, 210, 0.20);
+}
+
+.demoTab.demo-quick.active {
+  background: linear-gradient(135deg, #7e6fa8, #9a8bc1);
+  box-shadow: 0 10px 22px rgba(126, 111, 168, 0.22);
+}
+
+/* Mode cards */
+.modeCard.mode-photo.active {
+  border-color: rgba(94, 127, 166, 0.92);
+  box-shadow: 0 0 0 2px rgba(94, 127, 166, 0.14);
+  background: rgba(94, 127, 166, 0.10);
+}
+
+.modeCard.mode-quick.active {
+  border-color: rgba(184, 107, 125, 0.92);
+  box-shadow: 0 0 0 2px rgba(184, 107, 125, 0.14);
+  background: rgba(184, 107, 125, 0.10);
+}
+
+.modeCard.mode-character.active {
+  border-color: rgba(230, 224, 214, 0.95);
+  box-shadow: 0 0 0 2px rgba(230, 224, 214, 0.12);
+  background: rgba(230, 224, 214, 0.08);
+}
+
+/* Character group tabs */
+.charGroupTab.group-asian.active {
+  background: linear-gradient(135deg, #c9ab84, #e2c7a5);
+  color: #3c2b1d;
+  box-shadow: 0 10px 22px rgba(201, 171, 132, 0.22);
+}
+
+.charGroupTab.group-western.active {
+  background: linear-gradient(135deg, #6c86a7, #95aac2);
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(108, 134, 167, 0.22);
+}
+
+/* Tone cards */
+.toneCard.tone-warm.active {
+  border-color: rgba(214, 177, 102, 0.90);
+  box-shadow: 0 0 0 2px rgba(214, 177, 102, 0.14);
+  background: rgba(214, 177, 102, 0.08);
+}
+
+.toneCard.tone-romantic.active {
+  border-color: rgba(184, 107, 125, 0.92);
+  box-shadow: 0 0 0 2px rgba(184, 107, 125, 0.14);
+  background: rgba(184, 107, 125, 0.08);
+}
+
+.toneCard.tone-sympathy.active {
+  border-color: rgba(232, 228, 222, 0.92);
+  box-shadow: 0 0 0 2px rgba(232, 228, 222, 0.12);
+  background: rgba(232, 228, 222, 0.07);
+}
+
+.toneCard.tone-playful.active {
+  border-color: rgba(206, 145, 88, 0.92);
+  box-shadow: 0 0 0 2px rgba(206, 145, 88, 0.14);
+  background: rgba(206, 145, 88, 0.08);
+}
+
+.toneCard.tone-calm.active {
+  border-color: rgba(105, 146, 176, 0.92);
+  box-shadow: 0 0 0 2px rgba(105, 146, 176, 0.14);
+  background: rgba(105, 146, 176, 0.08);
+}
+
+/* Input mode tabs */
+.inputTab.input-ai.active {
+  background: linear-gradient(135deg, #5e7fa6, #88a4c4);
+  box-shadow: 0 10px 22px rgba(94, 127, 166, 0.24);
+}
+
+.inputTab.input-exact.active {
+  background: linear-gradient(135deg, #d2b36c, #ead39a);
+  color: #2f3440;
+  box-shadow: 0 10px 22px rgba(210, 179, 108, 0.22);
+}
+
+/* Main CTA */
+.createBtn.createBtn-submit {
+  background: linear-gradient(135deg, #35597b, #4d7397);
+  box-shadow: 0 16px 28px rgba(53, 89, 123, 0.26);
+}
+
+/* Focus states */
+.input:focus {
+  border-color: rgba(94, 127, 166, 0.92);
+  box-shadow: 0 0 0 4px rgba(94, 127, 166, 0.12);
+}
+
+/* Selected character card */
+.card.selected {
+  border-color: rgba(94, 127, 166, 0.92);
+  box-shadow: 0 0 0 2px rgba(94, 127, 166, 0.14);
+}
+
+/* Soften the selected character info box a little */
+.selectedCharBox {
+  background: rgba(94, 127, 166, 0.10);
+  border-color: rgba(94, 127, 166, 0.34);
+  color: #dbe8f6;
+}
+
+.pricingBox {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.priceCard {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #444;
+  background: #111;
+  color: white;
+  cursor: pointer;
+}
+
+.priceCard.active {
+  border: 2px solid #ff6b8a;
+}
+
+.priceTitle {
+  font-weight: bold;
+}
+
+.priceAmount {
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+/* ===== FINAL COMPACT TOP SECTIONS ===== */
+
+.compactInfo,
+.compactStyle {
+  padding: 10px 12px !important;
+  border-radius: 18px !important;
+}
+
+.compactInfo h2,
+.compactStyle h2 {
+  font-size: 15px !important;
+  margin-bottom: 8px !important;
+}
+
+.compactInfo .label {
+  font-size: 11px !important;
+  margin-bottom: 3px !important;
+}
+
+.compactInfo .input,
+.compactInfo select.input {
+  min-height: 36px !important;
+  padding: 7px 10px !important;
+  margin-bottom: 7px !important;
+  border-radius: 12px !important;
+  font-size: 13px !important;
+}
+
+.compactStyle .toneGrid {
+  gap: 7px !important;
+}
+
+.compactStyle .toneCard {
+  padding: 7px 5px !important;
+  border-radius: 13px !important;
+}
+
+.compactStyle .toneCard strong {
+  font-size: 12px !important;
+  margin-bottom: 2px !important;
+}
+
+.compactStyle .toneCard span {
+  font-size: 10px !important;
+  line-height: 1.25 !important;
+}
+
+.finalCtaCard {
+  padding: 12px !important;
+}
+
+/* ===== VOICE RECORDING WAVEFORM ===== */
+
+.voiceWaveBox {
+  margin: 10px 0 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+}
+
+.voiceWaveBars {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.voiceWaveBars span {
+  width: 5px;
+  min-height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ff9ac0, #b86b7d);
+  transition: height 0.08s ease;
+}
+
+.voiceWaveText {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+}
+
+/* ===== CIRCLE MIC RECORDING UI ===== */
+
+.micRecordArea {
+  margin: 12px 0 14px;
+  padding: 14px 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.09);
+  text-align: center;
+}
+
+.micCircleBtn {
+  width: 66px;
+  height: 66px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #b86b7d, #d18d9d);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+  box-shadow: 0 14px 28px rgba(184, 107, 125, 0.28);
+  cursor: pointer;
+}
+
+.micCircleBtn.recording {
+  background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+  animation: micPulse 1s infinite;
+}
+
+@keyframes micPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.35); }
+  70% { transform: scale(1.04); box-shadow: 0 0 0 14px rgba(255, 77, 109, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+}
+
+.voiceWaveBars {
+  height: 48px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.voiceWaveBars span {
+  width: 5px;
+  min-height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffbfd0, #b86b7d);
+  transition: height 0.08s ease;
+  opacity: 0.45;
+}
+
+.voiceWaveBars.active span {
+  opacity: 1;
+}
+
+.micRecordText {
+  margin: 4px 0 0;
+  color: rgba(255,255,255,0.76);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* ===== FORCE CIRCLE MIC UI ===== */
+
+.micRecordArea {
+  margin: 12px 0 14px;
+  padding: 14px 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.09);
+  text-align: center;
+}
+
+.micCircleBtn {
+  width: 66px;
+  height: 66px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #b86b7d, #d18d9d);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+  box-shadow: 0 14px 28px rgba(184, 107, 125, 0.28);
+  cursor: pointer;
+}
+
+.micCircleBtn.recording {
+  background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+  animation: micPulse 1s infinite;
+}
+
+@keyframes micPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.35); }
+  70% { transform: scale(1.04); box-shadow: 0 0 0 14px rgba(255, 77, 109, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+}
+
+.voiceWaveBars {
+  height: 48px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.voiceWaveBars span {
+  width: 5px;
+  min-height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffbfd0, #b86b7d);
+  transition: height 0.08s ease;
+  opacity: 0.45;
+}
+
+.voiceWaveBars.active span {
+  opacity: 1;
+}
+
+.micRecordText {
+  margin: 4px 0 0;
+  color: rgba(255,255,255,0.76);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* ===== BLUE PREMIUM MIC BUTTON ===== */
+
+.micCircleBtn {
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,0.42), transparent 28%),
+    linear-gradient(135deg, #4f8cff, #6ed0ff) !important;
+  box-shadow: 0 14px 30px rgba(79, 140, 255, 0.32) !important;
+}
+
+.micCircleBtn::before {
+  content: "🎤" !important;
+  font-size: 30px !important;
+}
+
+.micCircleBtn.recording {
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,0.38), transparent 28%),
+    linear-gradient(135deg, #2f80ed, #56ccf2) !important;
+}
+
+.micCircleBtn.recording::before {
+  content: "■" !important;
+  font-size: 20px !important;
+}
+
+.voiceWaveBars span {
+  background: linear-gradient(180deg, #9fd3ff, #4f8cff) !important;
+}
