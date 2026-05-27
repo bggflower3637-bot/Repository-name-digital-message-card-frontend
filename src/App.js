@@ -52,7 +52,6 @@ function App() {
   const [situation, setSituation] = useState("");
   const [customText, setCustomText] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
-const [orderPaste, setOrderPaste] = useState("");
 
   const [senderName, setSenderName] = useState("");
   const [senderGender, setSenderGender] = useState("female");
@@ -275,96 +274,7 @@ const res = await fetch(`${API_BASE}/polish-message`, {
     return "";
   };
 
-  const handleAutoFill = () => {
-  const getValue = (label) => {
-    const regex = new RegExp(`${label}:\\s*(.*)`, "i");
-    const match = orderPaste.match(regex);
-    return match ? match[1].trim() : "";
-  };
-
-  const orderMessage = getValue("Message");
-
-  setSenderName(getValue("Sender Name"));
-  setEmail(getValue("Sender Email"));
-  setSenderPhone(getValue("Sender Phone"));
-  setRecipientName(getValue("Recipient Name"));
-  setRecipientEmail(getValue("Recipient Email"));
-  setRecipientPhone(getValue("Recipient Phone"));
-
-  setInputMode("exact");
-  setCustomText(orderMessage);
-  setSituation(orderMessage);
-  setGeneratedMessage(orderMessage);
-
-  setStatusMsg("Order info filled. Review it, then create the video.");
-};
-
-const handleInternalCreate = async () => {
-  try {
-    setIsSubmitting(true);
-    setStatusMsg("Creating video internally...");
-
-    const finalMessage =
-  inputMode === "exact"
-    ? customText.trim()
-    : getFinalMessage();
-
-    const formData = new FormData();
-
-    const targetEmail = recipientEmail || email;
-
-formData.append("email", targetEmail);
-formData.append("recipientEmail", targetEmail);
-
-console.log("Sending email to:", targetEmail);
-
-    formData.append("message", finalMessage);
-formData.append("text", finalMessage);
-formData.append("customText", finalMessage);
-formData.append("situation", finalMessage);
-
-formData.append("messageData", JSON.stringify({
-      mode,
-      tone,
-      senderName,
-      recipientName,
-      recipientEmail,
-      recipientPhone,
-      senderPhone,
-      finalMessage,
-message: finalMessage,
-      character,
-      group,
-      senderGender,
-      voiceMode,
-      voiceStyle
-    }));
-
-    if (mode === "photo" && photoFile) {
-      formData.append("photo", photoFile);
-    }
-
-    const res = await fetch(`${API_BASE}/create-video`, {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Internal create failed.");
-    }
-
-    setStatusMsg("Video created successfully.");
-  } catch (error) {
-    console.error(error);
-    setStatusMsg(error.message || "Internal create failed.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-const handleProceedToPayment = async () => {
+  const handleProceedToPayment = async () => {
     if (!email.trim()) {
       alert("Please enter your email.");
       return;
@@ -380,10 +290,7 @@ const handleProceedToPayment = async () => {
       return;
     }
 
-    const finalMessage =
-  inputMode === "exact"
-    ? customText.trim()
-    : getFinalMessage();
+    const finalMessage = getFinalMessage();
 
     const payload = {
       email: email.trim(),
@@ -409,7 +316,6 @@ characterImageUrl: chars.find(c => c.id === character)?.image || "",
         situation: inputMode === "situation" ? situation.trim() : "",
         customText: inputMode === "exact" ? customText.trim() : "",
         finalMessage,
-message: finalMessage,
         voice: getSelectedVoice()
       }
     };
@@ -471,32 +377,6 @@ const res = await fetch(`${API_BASE}/create-checkout-session`, {
 
       
       <section className="section cardWrap compactInfo">
-  <h2>Paste Order Info</h2>
-
-  <textarea
-    className="input"
-    rows="8"
-    value={orderPaste}
-    onChange={(e) => setOrderPaste(e.target.value)}
-    placeholder={`Sender Name: James
-Sender Email: james@email.com
-Sender Phone: 415-000-0000
-Recipient Name: Sarah
-Recipient Email: sarah@email.com
-Recipient Phone: 415-111-1111
-Message: Happy Birthday Sarah! Wishing you a beautiful day.`}
-  />
-
-  <button
-    type="button"
-    className="createBtn createBtn-generate"
-    onClick={handleAutoFill}
-  >
-    Auto Fill Order
-  </button>
-</section>
-
-<section className="section cardWrap compactInfo">
         <h2>Sender Info</h2>
 
         <label className="label">Name</label>
@@ -868,8 +748,7 @@ Message: Happy Birthday Sarah! Wishing you a beautiful day.`}
 <section className="section cardWrap finalCtaCard">
 
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-  <button
+        <button
           type="button"
           className="createBtn createBtn-submit"
           onClick={handleProceedToPayment}
@@ -877,20 +756,6 @@ Message: Happy Birthday Sarah! Wishing you a beautiful day.`}
         >
           {isSubmitting ? "Processing..." : "Create My Video"}
         </button>
-
-  <button
-    type="button"
-    className="createBtn createBtn-submit"
-    onClick={handleInternalCreate}
-    disabled={isSubmitting}
-    style={{
-      background: "#111827",
-      border: "2px solid #22c55e"
-    }}
-  >
-    {isSubmitting ? "Processing..." : "Internal Create Video"}
-  </button>
-</div>
 
         <div className="actionNote">
           After payment, your video will be created and sent to your email.
@@ -931,10 +796,4 @@ Message: Happy Birthday Sarah! Wishing you a beautiful day.`}
 }
 
 export default App;
-
-
-
-
-
-
 
