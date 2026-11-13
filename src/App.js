@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
+import WatercolorCards from "./WatercolorCards";
 import CheckoutReturn from "./CheckoutReturn";
 import CollectionStudio, {CollectionPicker,collection} from "./CollectionStudio";
 
@@ -400,6 +401,8 @@ const res = await requestApi(`${API_BASE}/create-checkout-session`, {
           <p className="intro-copy">Create an AI video of a familiar face speaking your message.<br className="desktop-break" /> Made to send with flowers, gifts, or simply a little love.</p>
           <div className="intro-details"><span>Photo to talking video</span><span>Your words, brought to life</span><span>Delivered by email</span></div>
         </section>
+
+        <WatercolorCards onChoose={setTone} />
 
         <div className="studio-layout">
           <section className="studio" id="create-card" aria-label="Create your message card">

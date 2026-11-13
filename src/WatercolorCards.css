@@ -1,0 +1,46 @@
+.watercolor-collection {
+  max-width: 730px;
+  margin: 2rem auto 3rem;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.watercolor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(.75rem, 4vw, 2rem);
+}
+
+.watercolor-option {
+  display: grid;
+  gap: .75rem;
+  color: #304d3e;
+  text-decoration: none;
+}
+
+.watercolor-option:hover strong {
+  text-decoration: underline;
+}
+
+.watercolor-art {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f8f4ec;
+}
+
+.watercolor-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.watercolor-message {
+  position: absolute;
+  inset: 13% 12% auto;
+  color: #304d3e;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: clamp(.95rem, 3.3vw, 1.9rem);
+}
