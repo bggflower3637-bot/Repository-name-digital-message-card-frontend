@@ -4,6 +4,9 @@ import "./WatercolorCards.css";
 const cards = [
   { image: "single-bloom", tone: "warm", title: "Quiet thank-you", message: "Simply, thank you." },
   { image: "violet-stems", tone: "calm", title: "Thinking of you", message: "You’re in my thoughts." },
+  { image: "golden-poppies", tone: "playful", title: "Golden poppies", message: "A little sunshine for you." },
+  { image: "coral-lilies", tone: "romantic", title: "Coral lilies", message: "With all my love." },
+  { image: "lavender-sprigs", tone: "calm", title: "Lavender sprigs", message: "Wishing you a quiet moment." },
 ];
 
 export default function WatercolorCards({ onChoose }) {
@@ -14,7 +17,7 @@ export default function WatercolorCards({ onChoose }) {
         {cards.map(({ image, tone, title, message }) => (
           <a className="watercolor-option" key={image} href="#create-card" onClick={() => onChoose(tone)}>
             <span className="watercolor-art">
-              <img src={`/occasions-watercolor/${image}.webp`} alt="" width="720" height="960" decoding="async" />
+              <img src={`/occasions-watercolor/${image}.webp`} alt="" width="720" height="960" loading="lazy" decoding="async" />
               <span className="watercolor-message">{message}</span>
             </span>
             <strong>{title} <span aria-hidden="true">↗</span></strong>
