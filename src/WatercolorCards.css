@@ -44,3 +44,9 @@
   font-style: italic;
   font-size: clamp(.95rem, 3.3vw, 1.9rem);
 }
+
+@media (min-width: 680px) {
+  .watercolor-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
